@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { createClient } from '@/services/supabase/client';
 
 export default function LoginPage() {
@@ -52,7 +53,7 @@ export default function LoginPage() {
             <div className="relative w-full max-w-md liquid-glass p-8 animate-fade-up">
                 {/* Header */}
                 <div className="text-center mb-8">
-                    <div className="text-4xl mb-3">🕌</div>
+                    <Image src="/logo.png" alt="BarakahSpend" width={48} height={48} className="mx-auto mb-3 rounded-2xl shadow-lg shadow-indigo-200/40" />
                     <h1 className="text-2xl font-bold text-slate-800">
                         <span className="gradient-text">BarakahSpend</span>
                     </h1>

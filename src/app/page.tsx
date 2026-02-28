@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 const FEATURES = [
   { icon: '🕌', text: 'Masjid SaaS', gradient: 'from-indigo-400/20 to-violet-400/15' },
@@ -36,6 +37,7 @@ export default function Home() {
 
         {/* Hero title */}
         <div className="text-center mb-8 animate-fade-up stagger-1">
+          <Image src="/logo.png" alt="BarakahSpend" width={72} height={72} className="mx-auto mb-4 rounded-2xl shadow-lg shadow-indigo-200/40" />
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-4">
             <span className="gradient-text">Barakah</span>
             <span className="text-slate-800">Spend</span>
@@ -80,6 +82,6 @@ export default function Home() {
         </div>
 
       </div>
-    </div>
+    </div >
   );
 }

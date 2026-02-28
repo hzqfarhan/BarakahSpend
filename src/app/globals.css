@@ -232,6 +232,17 @@ body {
   box-shadow: var(--glass-highlight);
 }
 
+/* Sidebar glass — full height, right border only */
+.liquid-sidebar {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(var(--glass-blur-strong));
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong));
+  border-right: 1px solid var(--glass-border);
+  box-shadow:
+    4px 0 24px rgba(31, 38, 80, 0.04),
+    var(--glass-highlight);
+}
+
 /* ========================================
    GRADIENT GLASS SURFACES (Colored)
    ======================================== */
