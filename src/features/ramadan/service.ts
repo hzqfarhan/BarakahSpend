@@ -40,6 +40,30 @@ export function getRamadanDates(year: number) {
 }
 
 /**
+ * Get countdown to next Ramadan (days remaining).
+ * Returns 0 if Ramadan is currently active.
+ */
+export function getRamadanCountdown(date?: Date): { daysUntil: number; nextYear: number } | null {
+    const now = date || new Date();
+
+    if (isRamadanActive(now)) return { daysUntil: 0, nextYear: now.getFullYear() };
+
+    // Check current year first, then next years
+    for (let y = now.getFullYear(); y <= now.getFullYear() + 2; y++) {
+        const ramadan = RAMADAN_DATES[y];
+        if (!ramadan) continue;
+
+        const start = new Date(ramadan.start);
+        if (start > now) {
+            const diff = Math.ceil((start.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+            return { daysUntil: diff, nextYear: y };
+        }
+    }
+
+    return null;
+}
+
+/**
  * Get Ramadan day number (1-30).
  */
 export function getRamadanDay(date?: Date): number {

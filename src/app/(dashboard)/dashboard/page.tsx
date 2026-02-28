@@ -26,6 +26,7 @@ import { toast } from 'sonner';
 import { Sidebar, BottomNav, type NavTab } from '@/components/dashboard/Sidebar';
 import { ChatBot } from '@/components/dashboard/ChatBot';
 import { MusicPlayer } from '@/components/dashboard/MusicPlayer';
+import { PrivacyNotice, OfflineDataBanner } from '@/components/dashboard/PrivacyNotice';
 
 // ========================
 // Icon helper — renders generated images instead of emoji
@@ -98,6 +99,8 @@ export default function DashboardPage() {
             totalSedekah,
             totalSavings: savings,
             totalDebt: debt,
+            zakatPaid: (await getZakatHistory(userId)).some(z => z.year === new Date().getFullYear()),
+            sedekahStreak: streak,
         });
         setBarakahScore(score);
 
