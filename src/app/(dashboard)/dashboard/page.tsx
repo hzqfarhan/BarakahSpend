@@ -5,21 +5,6 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { useOnlineStatus } from '@/hooks/use-online-status';
 import { useSyncStatus } from '@/hooks/use-sync-status';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import {
     createExpense,
     getLocalExpenses,
@@ -50,7 +35,7 @@ const NAV_ITEMS: { key: NavTab; label: string; icon: string }[] = [
 ];
 
 export default function DashboardPage() {
-    const { userId, userName, userEmail, userAvatar, signOut, loading: authLoading, isAuthenticated } = useAuth();
+    const { userId, userName, userEmail, signOut, loading: authLoading, isAuthenticated } = useAuth();
     const isOnline = useOnlineStatus();
     const { pendingCount, hasPending } = useSyncStatus();
     const [mounted, setMounted] = useState(false);
@@ -67,12 +52,12 @@ export default function DashboardPage() {
     const [expenseAmount, setExpenseAmount] = useState('');
     const [expenseCategory, setExpenseCategory] = useState<ExpenseCategory>('makanan_halal');
     const [expenseDesc, setExpenseDesc] = useState('');
-    const [expenseDialogOpen, setExpenseDialogOpen] = useState(false);
+    const [showExpenseForm, setShowExpenseForm] = useState(false);
 
     // Sedekah form
     const [sedekahAmount, setSedekahAmount] = useState('');
     const [sedekahRecipient, setSedekahRecipient] = useState('');
-    const [sedekahDialogOpen, setSedekahDialogOpen] = useState(false);
+    const [showSedekahForm, setShowSedekahForm] = useState(false);
 
     // Zakat
     const [zakatSavings, setZakatSavings] = useState('');
@@ -93,22 +78,20 @@ export default function DashboardPage() {
         setSedekahStreak(streak);
         setRamadanStats(ramadan);
 
-        // Calculate Barakah score
         const totalExpenses = exp.reduce((s, e) => s + e.amount, 0);
         const totalSedekah = sed.reduce((s, e) => s + e.amount, 0);
         const savings = exp.filter(e => e.category === 'simpanan').reduce((s, e) => s + e.amount, 0);
         const debt = exp.filter(e => e.category === 'hutang').reduce((s, e) => s + e.amount, 0);
 
         const score = calculateBarakahScore({
-            totalIncome: 5000, // placeholder
+            totalIncome: 5000,
             totalExpenses,
-            totalSedekah: totalSedekah,
+            totalSedekah,
             totalSavings: savings,
             totalDebt: debt,
         });
         setBarakahScore(score);
 
-        // Load zakat history
         const history = await getZakatHistory(userId);
         setZakatHistory(history);
     }, [userId]);
@@ -135,7 +118,7 @@ export default function DashboardPage() {
         toast.success('Expense added!', { description: hasPending ? 'Will sync when online' : undefined });
         setExpenseAmount('');
         setExpenseDesc('');
-        setExpenseDialogOpen(false);
+        setShowExpenseForm(false);
         loadData();
     };
 
@@ -149,7 +132,7 @@ export default function DashboardPage() {
         toast.success('Sedekah recorded! 🤲', { description: 'May Allah multiply your reward' });
         setSedekahAmount('');
         setSedekahRecipient('');
-        setSedekahDialogOpen(false);
+        setShowSedekahForm(false);
         loadData();
     };
 
@@ -173,241 +156,185 @@ export default function DashboardPage() {
 
     if (!mounted || authLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-[#0a0a1a]">
+            <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center space-y-4">
                     <div className="text-4xl animate-pulse">🕌</div>
-                    <p className="text-slate-400">Loading...</p>
+                    <p className="text-slate-500">Loading...</p>
                 </div>
             </div>
         );
     }
 
+    // =========================================
+    // INLINE MODAL (replaces Dialog component)
+    // =========================================
+    const Modal = ({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) => {
+        if (!open) return null;
+        return (
+            <div className="fixed inset-0 z-[60] flex items-center justify-center px-4">
+                <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={onClose} />
+                <div className="relative w-full max-w-sm liquid-glass p-6 animate-fade-up">
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-bold text-slate-800">{title}</h3>
+                        <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+                    </div>
+                    {children}
+                </div>
+            </div>
+        );
+    };
+
+    // =========================================
+    // BARAKAH SCORE TIER COLORS
+    // =========================================
+    const tierColors = {
+        excellent: { bg: 'bg-emerald-100/60', text: 'text-emerald-700', border: 'border-emerald-200/50' },
+        good: { bg: 'bg-sky-100/60', text: 'text-sky-700', border: 'border-sky-200/50' },
+        fair: { bg: 'bg-amber-100/60', text: 'text-amber-700', border: 'border-amber-200/50' },
+        needs_improvement: { bg: 'bg-red-100/60', text: 'text-red-700', border: 'border-red-200/50' },
+    };
+    const tc = tierColors[barakahScore?.tier || 'fair'];
+
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#0a0a1a] via-[#1a103d] to-[#0a0a1a] pb-safe">
-            {/* Status Bar */}
-            <div className="sticky top-0 z-50 px-4 py-3 glass-card rounded-none border-x-0 border-t-0">
+        <div className="min-h-screen pb-safe">
+            {/* ============ STATUS BAR ============ */}
+            <div className="sticky top-0 z-50 px-4 py-3 liquid-glass-strong rounded-none border-x-0 border-t-0" style={{ borderRadius: '0 0 1.25rem 1.25rem' }}>
                 <div className="flex items-center justify-between max-w-lg mx-auto">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-sm font-bold">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center text-white text-sm font-bold shadow-md shadow-indigo-300/30">
                             {userName?.[0] || userEmail?.[0] || '?'}
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-white">{userName || 'User'}</p>
+                            <p className="text-sm font-semibold text-slate-800">{userName || 'User'}</p>
                             <div className="flex items-center gap-2">
-                                <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-400' : 'bg-red-400 sync-pulse'}`} />
-                                <span className="text-xs text-slate-500">{isOnline ? 'Online' : 'Offline'}</span>
+                                <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-400' : 'bg-red-400 sync-pulse'}`} />
+                                <span className="text-xs text-slate-400">{isOnline ? 'Online' : 'Offline'}</span>
                                 {hasPending && (
-                                    <Badge variant="secondary" className="text-[10px] h-4 px-1.5 bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
+                                    <span className="liquid-badge bg-amber-50/80 text-amber-600 text-[10px] py-0.5 px-2 border-amber-200/40">
                                         {pendingCount} pending
-                                    </Badge>
+                                    </span>
                                 )}
                             </div>
                         </div>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={signOut} className="text-slate-400 hover:text-white text-xs">
+                    <button onClick={signOut} className="text-slate-400 hover:text-slate-600 text-xs font-medium transition-colors px-3 py-1.5 rounded-full hover:bg-slate-100/60">
                         Sign Out
-                    </Button>
+                    </button>
                 </div>
             </div>
 
-            {/* Main Content */}
-            <div className="max-w-lg mx-auto px-4 py-6 space-y-6">
-                {/* HOME TAB */}
+            {/* ============ MAIN CONTENT ============ */}
+            <div className="max-w-lg mx-auto px-4 py-6 space-y-5">
+
+                {/* ============================== HOME TAB ============================== */}
                 {activeTab === 'home' && (
                     <>
                         {/* Barakah Score */}
-                        <Card className="glass-card border-purple-500/20 overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-pink-600/5" />
-                            <CardContent className="relative pt-6 text-center">
-                                <p className="text-sm text-slate-400 mb-2">Your Barakah Score</p>
-                                <div className="text-6xl font-bold gradient-text mb-2">
-                                    {barakahScore?.score || 0}%
-                                </div>
-                                <Progress value={barakahScore?.score || 0} className="h-2 mb-3" />
-                                <Badge
-                                    className={`mb-3 ${barakahScore?.tier === 'excellent'
-                                        ? 'bg-green-500/20 text-green-400 border-green-500/30'
-                                        : barakahScore?.tier === 'good'
-                                            ? 'bg-blue-500/20 text-blue-400 border-blue-500/30'
-                                            : barakahScore?.tier === 'fair'
-                                                ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
-                                                : 'bg-red-500/20 text-red-400 border-red-500/30'
-                                        }`}
-                                >
-                                    {barakahScore?.tier?.replace('_', ' ') || 'calculating...'}
-                                </Badge>
-                                <p className="text-sm text-slate-400 leading-relaxed">
-                                    {barakahScore?.feedback || 'Add expenses and sedekah to see your score.'}
-                                </p>
-                            </CardContent>
-                        </Card>
+                        <div className="liquid-glass overflow-hidden liquid-gradient-indigo p-6 text-center animate-fade-up">
+                            <p className="text-sm text-slate-500 mb-2">Your Barakah Score</p>
+                            <div className="text-6xl font-extrabold gradient-text mb-2">
+                                {barakahScore?.score || 0}%
+                            </div>
+                            <div className="w-full h-2 bg-slate-200/40 rounded-full overflow-hidden mb-3">
+                                <div
+                                    className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full transition-all duration-700"
+                                    style={{ width: `${barakahScore?.score || 0}%` }}
+                                />
+                            </div>
+                            <span className={`liquid-badge ${tc.bg} ${tc.text} ${tc.border}`}>
+                                {barakahScore?.tier?.replace('_', ' ') || 'calculating...'}
+                            </span>
+                            <p className="text-sm text-slate-500 mt-3 leading-relaxed">
+                                {barakahScore?.feedback || 'Add expenses and sedekah to see your score.'}
+                            </p>
+                        </div>
 
                         {/* AI Advice */}
                         {advice && (
-                            <Card className="glass-card border-purple-500/20">
-                                <CardHeader className="pb-2">
-                                    <CardTitle className="text-sm flex items-center gap-2">
-                                        <span>🤖</span> AI Financial Advice
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <p className="text-sm text-slate-300 mb-3">{advice.advice}</p>
-                                    <div className="space-y-1.5">
-                                        {advice.suggestions.map((s, i) => (
-                                            <div key={i} className="flex items-start gap-2 text-xs text-slate-400">
-                                                <span className="text-purple-400 mt-0.5">•</span>
-                                                {s}
-                                            </div>
-                                        ))}
-                                    </div>
-                                </CardContent>
-                            </Card>
+                            <div className="liquid-glass p-5 animate-fade-up stagger-1">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <span className="text-lg">🤖</span>
+                                    <h3 className="text-sm font-bold text-slate-700">AI Financial Advice</h3>
+                                </div>
+                                <p className="text-sm text-slate-600 mb-3">{advice.advice}</p>
+                                <div className="space-y-1.5">
+                                    {advice.suggestions.map((s, i) => (
+                                        <div key={i} className="flex items-start gap-2 text-xs text-slate-500">
+                                            <span className="text-indigo-400 mt-0.5">•</span>
+                                            {s}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                         )}
 
                         {/* Quick Actions */}
-                        <div className="grid grid-cols-2 gap-3">
-                            <Dialog open={expenseDialogOpen} onOpenChange={setExpenseDialogOpen}>
-                                <DialogTrigger asChild>
-                                    <Button className="h-20 flex-col gap-1 bg-gradient-to-br from-purple-600/20 to-purple-600/10 border border-purple-500/20 text-white hover:from-purple-600/30 hover:to-purple-600/20">
-                                        <span className="text-2xl">💸</span>
-                                        <span className="text-xs">Add Expense</span>
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent className="glass-card border-purple-500/20 max-w-sm">
-                                    <DialogHeader>
-                                        <DialogTitle>Add Expense</DialogTitle>
-                                    </DialogHeader>
-                                    <div className="space-y-4">
-                                        <div className="space-y-2">
-                                            <Label>Amount (RM)</Label>
-                                            <Input type="number" step="0.01" placeholder="0.00" value={expenseAmount} onChange={e => setExpenseAmount(e.target.value)} className="bg-purple-500/5 border-purple-500/20" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>Category</Label>
-                                            <Select value={expenseCategory} onValueChange={v => setExpenseCategory(v as ExpenseCategory)}>
-                                                <SelectTrigger className="bg-purple-500/5 border-purple-500/20"><SelectValue /></SelectTrigger>
-                                                <SelectContent>
-                                                    {EXPENSE_CATEGORIES.map(c => (
-                                                        <SelectItem key={c.value} value={c.value}>{c.icon} {c.label}</SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>Description (optional)</Label>
-                                            <Input placeholder="e.g. Nasi Lemak" value={expenseDesc} onChange={e => setExpenseDesc(e.target.value)} className="bg-purple-500/5 border-purple-500/20" />
-                                        </div>
-                                        <Button onClick={handleAddExpense} className="w-full bg-gradient-to-r from-purple-600 to-purple-500">Save Expense</Button>
-                                    </div>
-                                </DialogContent>
-                            </Dialog>
-
-                            <Dialog open={sedekahDialogOpen} onOpenChange={setSedekahDialogOpen}>
-                                <DialogTrigger asChild>
-                                    <Button className="h-20 flex-col gap-1 bg-gradient-to-br from-green-600/20 to-green-600/10 border border-green-500/20 text-white hover:from-green-600/30 hover:to-green-600/20">
-                                        <span className="text-2xl">🤲</span>
-                                        <span className="text-xs">Give Sedekah</span>
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent className="glass-card border-purple-500/20 max-w-sm">
-                                    <DialogHeader>
-                                        <DialogTitle>Record Sedekah</DialogTitle>
-                                    </DialogHeader>
-                                    <div className="space-y-4">
-                                        <div className="space-y-2">
-                                            <Label>Amount (RM)</Label>
-                                            <Input type="number" step="0.01" placeholder="0.00" value={sedekahAmount} onChange={e => setSedekahAmount(e.target.value)} className="bg-purple-500/5 border-purple-500/20" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>Recipient (optional)</Label>
-                                            <Input placeholder="e.g. Masjid Al-Falah" value={sedekahRecipient} onChange={e => setSedekahRecipient(e.target.value)} className="bg-purple-500/5 border-purple-500/20" />
-                                        </div>
-                                        <Button onClick={handleAddSedekah} className="w-full bg-gradient-to-r from-green-600 to-green-500">Record Sedekah 🤲</Button>
-                                    </div>
-                                </DialogContent>
-                            </Dialog>
+                        <div className="grid grid-cols-2 gap-3 animate-fade-up stagger-2">
+                            <button
+                                onClick={() => setShowExpenseForm(true)}
+                                className="liquid-glass liquid-gradient-indigo p-5 text-center hover:scale-[1.03] transition-transform active:scale-[0.98]"
+                            >
+                                <span className="text-2xl block mb-1">💸</span>
+                                <span className="text-xs font-medium text-slate-600">Add Expense</span>
+                            </button>
+                            <button
+                                onClick={() => setShowSedekahForm(true)}
+                                className="liquid-glass liquid-gradient-emerald p-5 text-center hover:scale-[1.03] transition-transform active:scale-[0.98]"
+                            >
+                                <span className="text-2xl block mb-1">🤲</span>
+                                <span className="text-xs font-medium text-slate-600">Give Sedekah</span>
+                            </button>
                         </div>
 
                         {/* Sedekah Streak */}
-                        <Card className="glass-card border-green-500/20">
-                            <CardContent className="pt-4 flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm text-slate-400">Sedekah Streak</p>
-                                    <p className="text-2xl font-bold text-green-400">{sedekahStreak} days 🔥</p>
-                                </div>
-                                <div className="text-4xl">🤲</div>
-                            </CardContent>
-                        </Card>
+                        <div className="liquid-glass liquid-gradient-emerald p-5 flex items-center justify-between animate-fade-up stagger-3">
+                            <div>
+                                <p className="text-sm text-slate-500">Sedekah Streak</p>
+                                <p className="text-2xl font-bold text-emerald-600">{sedekahStreak} days 🔥</p>
+                            </div>
+                            <div className="text-4xl">🤲</div>
+                        </div>
 
-                        {/* Recent Activity */}
-                        <Card className="glass-card border-purple-500/20">
-                            <CardHeader className="pb-2">
-                                <CardTitle className="text-sm text-slate-300">Recent Expenses</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-2">
+                        {/* Recent Expenses */}
+                        <div className="liquid-glass p-5 animate-fade-up stagger-4">
+                            <h3 className="text-sm font-bold text-slate-700 mb-3">Recent Expenses</h3>
+                            <div className="space-y-1">
                                 {expenses.slice(0, 5).map((exp, i) => {
                                     const cat = EXPENSE_CATEGORIES.find(c => c.value === exp.category);
                                     return (
-                                        <div key={exp.id || i} className="flex items-center justify-between py-2 border-b border-purple-500/10 last:border-0">
+                                        <div key={exp.id || i} className="flex items-center justify-between py-2.5 border-b border-slate-100/60 last:border-0">
                                             <div className="flex items-center gap-3">
                                                 <span className="text-xl">{cat?.icon || '💰'}</span>
                                                 <div>
-                                                    <p className="text-sm text-white">{cat?.label || exp.category}</p>
-                                                    <p className="text-xs text-slate-500">{exp.description || exp.date}</p>
+                                                    <p className="text-sm font-medium text-slate-700">{cat?.label || exp.category}</p>
+                                                    <p className="text-xs text-slate-400">{exp.description || exp.date}</p>
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <p className="text-sm font-medium text-white">RM {exp.amount.toFixed(2)}</p>
+                                                <p className="text-sm font-semibold text-slate-800">RM {exp.amount.toFixed(2)}</p>
                                                 {!exp.synced && (
-                                                    <Badge variant="outline" className="text-[10px] h-4 px-1 text-yellow-400 border-yellow-500/30">
+                                                    <span className="liquid-badge bg-amber-50/80 text-amber-600 text-[10px] py-0 px-1.5 border-amber-200/40">
                                                         pending
-                                                    </Badge>
+                                                    </span>
                                                 )}
                                             </div>
                                         </div>
                                     );
                                 })}
                                 {expenses.length === 0 && (
-                                    <p className="text-sm text-slate-500 text-center py-4">No expenses yet. Add your first expense!</p>
+                                    <p className="text-sm text-slate-400 text-center py-4">No expenses yet. Add your first expense!</p>
                                 )}
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
                     </>
                 )}
 
-                {/* EXPENSES TAB */}
+                {/* ============================== EXPENSES TAB ============================== */}
                 {activeTab === 'expenses' && (
                     <>
                         <div className="flex items-center justify-between">
-                            <h2 className="text-xl font-bold text-white">Expenses</h2>
-                            <Dialog open={expenseDialogOpen} onOpenChange={setExpenseDialogOpen}>
-                                <DialogTrigger asChild>
-                                    <Button size="sm" className="bg-gradient-to-r from-purple-600 to-purple-500">+ Add</Button>
-                                </DialogTrigger>
-                                <DialogContent className="glass-card border-purple-500/20 max-w-sm">
-                                    <DialogHeader><DialogTitle>Add Expense</DialogTitle></DialogHeader>
-                                    <div className="space-y-4">
-                                        <div className="space-y-2">
-                                            <Label>Amount (RM)</Label>
-                                            <Input type="number" step="0.01" placeholder="0.00" value={expenseAmount} onChange={e => setExpenseAmount(e.target.value)} className="bg-purple-500/5 border-purple-500/20" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>Category</Label>
-                                            <Select value={expenseCategory} onValueChange={v => setExpenseCategory(v as ExpenseCategory)}>
-                                                <SelectTrigger className="bg-purple-500/5 border-purple-500/20"><SelectValue /></SelectTrigger>
-                                                <SelectContent>
-                                                    {EXPENSE_CATEGORIES.map(c => (<SelectItem key={c.value} value={c.value}>{c.icon} {c.label}</SelectItem>))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>Description</Label>
-                                            <Input placeholder="e.g. Lunch" value={expenseDesc} onChange={e => setExpenseDesc(e.target.value)} className="bg-purple-500/5 border-purple-500/20" />
-                                        </div>
-                                        <Button onClick={handleAddExpense} className="w-full bg-gradient-to-r from-purple-600 to-purple-500">Save</Button>
-                                    </div>
-                                </DialogContent>
-                            </Dialog>
+                            <h2 className="text-xl font-bold text-slate-800">Expenses</h2>
+                            <button onClick={() => setShowExpenseForm(true)} className="liquid-btn liquid-btn-primary text-sm px-4 py-2">+ Add</button>
                         </div>
 
                         {/* Category Breakdown */}
@@ -415,243 +342,206 @@ export default function DashboardPage() {
                             {EXPENSE_CATEGORIES.map(cat => {
                                 const total = expenses.filter(e => e.category === cat.value).reduce((s, e) => s + e.amount, 0);
                                 return (
-                                    <Card key={cat.value} className="glass-card border-purple-500/10">
-                                        <CardContent className="pt-4 pb-3">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <span>{cat.icon}</span>
-                                                <span className="text-xs text-slate-400">{cat.label}</span>
-                                            </div>
-                                            <p className="text-lg font-bold text-white">RM {total.toFixed(2)}</p>
-                                        </CardContent>
-                                    </Card>
+                                    <div key={cat.value} className="liquid-glass liquid-gradient-indigo p-4">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <span>{cat.icon}</span>
+                                            <span className="text-xs text-slate-500">{cat.label}</span>
+                                        </div>
+                                        <p className="text-lg font-bold text-slate-800">RM {total.toFixed(2)}</p>
+                                    </div>
                                 );
                             })}
                         </div>
 
                         {/* All Expenses */}
-                        <Card className="glass-card border-purple-500/20">
-                            <CardContent className="pt-4 space-y-2">
+                        <div className="liquid-glass p-5">
+                            <div className="space-y-1">
                                 {expenses.map((exp, i) => {
                                     const cat = EXPENSE_CATEGORIES.find(c => c.value === exp.category);
                                     return (
-                                        <div key={exp.id || i} className="flex items-center justify-between py-2 border-b border-purple-500/10 last:border-0">
+                                        <div key={exp.id || i} className="flex items-center justify-between py-2.5 border-b border-slate-100/60 last:border-0">
                                             <div className="flex items-center gap-3">
                                                 <span>{cat?.icon}</span>
                                                 <div>
-                                                    <p className="text-sm text-white">{exp.description || cat?.label}</p>
-                                                    <p className="text-xs text-slate-500">{exp.date}</p>
+                                                    <p className="text-sm font-medium text-slate-700">{exp.description || cat?.label}</p>
+                                                    <p className="text-xs text-slate-400">{exp.date}</p>
                                                 </div>
                                             </div>
-                                            <p className="text-sm font-medium" style={{ color: cat?.color }}>-RM {exp.amount.toFixed(2)}</p>
+                                            <p className="text-sm font-semibold text-slate-800">-RM {exp.amount.toFixed(2)}</p>
                                         </div>
                                     );
                                 })}
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
                     </>
                 )}
 
-                {/* SEDEKAH TAB */}
+                {/* ============================== SEDEKAH TAB ============================== */}
                 {activeTab === 'sedekah' && (
                     <>
                         <div className="flex items-center justify-between">
-                            <h2 className="text-xl font-bold text-white">Sedekah</h2>
-                            <Dialog open={sedekahDialogOpen} onOpenChange={setSedekahDialogOpen}>
-                                <DialogTrigger asChild>
-                                    <Button size="sm" className="bg-gradient-to-r from-green-600 to-green-500">+ Give</Button>
-                                </DialogTrigger>
-                                <DialogContent className="glass-card border-purple-500/20 max-w-sm">
-                                    <DialogHeader><DialogTitle>Record Sedekah</DialogTitle></DialogHeader>
-                                    <div className="space-y-4">
-                                        <div className="space-y-2">
-                                            <Label>Amount (RM)</Label>
-                                            <Input type="number" step="0.01" placeholder="0.00" value={sedekahAmount} onChange={e => setSedekahAmount(e.target.value)} className="bg-purple-500/5 border-purple-500/20" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>Recipient</Label>
-                                            <Input placeholder="e.g. Masjid" value={sedekahRecipient} onChange={e => setSedekahRecipient(e.target.value)} className="bg-purple-500/5 border-purple-500/20" />
-                                        </div>
-                                        <Button onClick={handleAddSedekah} className="w-full bg-gradient-to-r from-green-600 to-green-500">Record 🤲</Button>
-                                    </div>
-                                </DialogContent>
-                            </Dialog>
+                            <h2 className="text-xl font-bold text-slate-800">Sedekah</h2>
+                            <button onClick={() => setShowSedekahForm(true)} className="liquid-btn liquid-btn-emerald text-sm px-4 py-2">+ Give</button>
                         </div>
 
                         <div className="grid grid-cols-2 gap-3">
-                            <Card className="glass-card border-green-500/20">
-                                <CardContent className="pt-4 text-center">
-                                    <p className="text-xs text-slate-400">Streak</p>
-                                    <p className="text-3xl font-bold text-green-400">{sedekahStreak} 🔥</p>
-                                    <p className="text-xs text-slate-500">consecutive days</p>
-                                </CardContent>
-                            </Card>
-                            <Card className="glass-card border-green-500/20">
-                                <CardContent className="pt-4 text-center">
-                                    <p className="text-xs text-slate-400">This Month</p>
-                                    <p className="text-3xl font-bold text-green-400">
-                                        RM {sedekahRecords.reduce((s, r) => s + r.amount, 0).toFixed(0)}
-                                    </p>
-                                    <p className="text-xs text-slate-500">{sedekahRecords.length} records</p>
-                                </CardContent>
-                            </Card>
+                            <div className="liquid-glass liquid-gradient-emerald p-4 text-center">
+                                <p className="text-xs text-slate-500">Streak</p>
+                                <p className="text-3xl font-bold text-emerald-600">{sedekahStreak} 🔥</p>
+                                <p className="text-xs text-slate-400">consecutive days</p>
+                            </div>
+                            <div className="liquid-glass liquid-gradient-teal p-4 text-center">
+                                <p className="text-xs text-slate-500">This Month</p>
+                                <p className="text-3xl font-bold text-teal-600">
+                                    RM {sedekahRecords.reduce((s, r) => s + r.amount, 0).toFixed(0)}
+                                </p>
+                                <p className="text-xs text-slate-400">{sedekahRecords.length} records</p>
+                            </div>
                         </div>
 
-                        <Card className="glass-card border-purple-500/20">
-                            <CardContent className="pt-4 space-y-2">
+                        <div className="liquid-glass p-5">
+                            <div className="space-y-1">
                                 {sedekahRecords.map((rec, i) => (
-                                    <div key={rec.id || i} className="flex items-center justify-between py-2 border-b border-purple-500/10 last:border-0">
+                                    <div key={rec.id || i} className="flex items-center justify-between py-2.5 border-b border-slate-100/60 last:border-0">
                                         <div>
-                                            <p className="text-sm text-white">{rec.recipient || 'Sedekah'}</p>
-                                            <p className="text-xs text-slate-500">{rec.date}</p>
+                                            <p className="text-sm font-medium text-slate-700">{rec.recipient || 'Sedekah'}</p>
+                                            <p className="text-xs text-slate-400">{rec.date}</p>
                                         </div>
-                                        <p className="text-sm font-medium text-green-400">RM {rec.amount.toFixed(2)}</p>
+                                        <p className="text-sm font-semibold text-emerald-600">RM {rec.amount.toFixed(2)}</p>
                                     </div>
                                 ))}
                                 {sedekahRecords.length === 0 && (
-                                    <p className="text-sm text-slate-500 text-center py-4">No sedekah records yet. Start giving! 🤲</p>
+                                    <p className="text-sm text-slate-400 text-center py-4">No sedekah records yet. Start giving! 🤲</p>
                                 )}
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
                     </>
                 )}
 
-                {/* ZAKAT TAB */}
+                {/* ============================== ZAKAT TAB ============================== */}
                 {activeTab === 'zakat' && (
                     <>
-                        <h2 className="text-xl font-bold text-white">Zakat Calculator</h2>
+                        <h2 className="text-xl font-bold text-slate-800">Zakat Calculator</h2>
 
-                        <Card className="glass-card border-purple-500/20">
-                            <CardContent className="pt-6 space-y-4">
-                                <div className="space-y-2">
-                                    <Label>Total Savings (RM)</Label>
-                                    <Input type="number" step="0.01" placeholder="e.g. 50000" value={zakatSavings} onChange={e => setZakatSavings(e.target.value)} className="bg-purple-500/5 border-purple-500/20" />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>Gold Value (RM) — optional</Label>
-                                    <Input type="number" step="0.01" placeholder="e.g. 10000" value={zakatGold} onChange={e => setZakatGold(e.target.value)} className="bg-purple-500/5 border-purple-500/20" />
-                                </div>
-                                <Button onClick={handleCalculateZakat} className="w-full bg-gradient-to-r from-yellow-600 to-yellow-500">
-                                    Calculate Zakat
-                                </Button>
-                            </CardContent>
-                        </Card>
+                        <div className="liquid-glass p-6 space-y-4">
+                            <div className="space-y-1.5">
+                                <label className="text-sm font-medium text-slate-600">Total Savings (RM)</label>
+                                <input type="number" step="0.01" placeholder="e.g. 50000" value={zakatSavings} onChange={e => setZakatSavings(e.target.value)} className="w-full h-12 liquid-input" />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-sm font-medium text-slate-600">Gold Value (RM) — optional</label>
+                                <input type="number" step="0.01" placeholder="e.g. 10000" value={zakatGold} onChange={e => setZakatGold(e.target.value)} className="w-full h-12 liquid-input" />
+                            </div>
+                            <button onClick={handleCalculateZakat} className="w-full liquid-btn liquid-btn-amber h-12 text-base">
+                                Calculate Zakat
+                            </button>
+                        </div>
 
                         {zakatResult && (
-                            <Card className="glass-card border-yellow-500/20">
-                                <CardContent className="pt-6 space-y-3">
-                                    <div className="text-center">
-                                        <p className="text-sm text-slate-400">Zakat Amount (2.5%)</p>
-                                        <p className="text-4xl font-bold text-yellow-400">
-                                            RM {zakatResult.zakatAmount.toFixed(2)}
-                                        </p>
+                            <div className="liquid-glass liquid-gradient-amber p-6 space-y-4 animate-fade-up">
+                                <div className="text-center">
+                                    <p className="text-sm text-slate-500">Zakat Amount (2.5%)</p>
+                                    <p className="text-4xl font-extrabold text-amber-600">
+                                        RM {zakatResult.zakatAmount.toFixed(2)}
+                                    </p>
+                                </div>
+                                <div className="h-px bg-slate-200/60" />
+                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <p className="text-slate-400">Total Wealth</p>
+                                        <p className="font-semibold text-slate-700">RM {zakatResult.totalWealth.toFixed(2)}</p>
                                     </div>
-                                    <Separator className="bg-purple-500/20" />
-                                    <div className="grid grid-cols-2 gap-4 text-sm">
-                                        <div>
-                                            <p className="text-slate-400">Total Wealth</p>
-                                            <p className="text-white font-medium">RM {zakatResult.totalWealth.toFixed(2)}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-slate-400">Nisab Threshold</p>
-                                            <p className="text-white font-medium">RM {zakatResult.nisabThreshold.toFixed(2)}</p>
-                                        </div>
+                                    <div>
+                                        <p className="text-slate-400">Nisab Threshold</p>
+                                        <p className="font-semibold text-slate-700">RM {zakatResult.nisabThreshold.toFixed(2)}</p>
                                     </div>
-                                    <Badge className={zakatResult.isNisabEligible ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}>
-                                        {zakatResult.isNisabEligible ? '✅ Nisab Eligible — Zakat is obligatory' : '❌ Below Nisab — Zakat is not obligatory'}
-                                    </Badge>
-                                </CardContent>
-                            </Card>
+                                </div>
+                                <span className={`liquid-badge ${zakatResult.isNisabEligible ? 'bg-emerald-50/80 text-emerald-700 border-emerald-200/50' : 'bg-red-50/80 text-red-700 border-red-200/50'}`}>
+                                    {zakatResult.isNisabEligible ? '✅ Nisab Eligible — Zakat is obligatory' : '❌ Below Nisab — Zakat is not obligatory'}
+                                </span>
+                            </div>
                         )}
 
-                        {/* History */}
                         {zakatHistory.length > 0 && (
-                            <Card className="glass-card border-purple-500/20">
-                                <CardHeader className="pb-2">
-                                    <CardTitle className="text-sm text-slate-300">Zakat History</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-2">
+                            <div className="liquid-glass p-5">
+                                <h3 className="text-sm font-bold text-slate-700 mb-3">Zakat History</h3>
+                                <div className="space-y-1">
                                     {zakatHistory.map((z, i) => (
-                                        <div key={z.id || i} className="flex items-center justify-between py-2 border-b border-purple-500/10 last:border-0">
+                                        <div key={z.id || i} className="flex items-center justify-between py-2.5 border-b border-slate-100/60 last:border-0">
                                             <div>
-                                                <p className="text-sm text-white">{z.year}</p>
-                                                <p className="text-xs text-slate-500">Savings: RM {z.total_savings.toFixed(2)}</p>
+                                                <p className="text-sm font-medium text-slate-700">{z.year}</p>
+                                                <p className="text-xs text-slate-400">Savings: RM {z.total_savings.toFixed(2)}</p>
                                             </div>
-                                            <p className="text-sm font-medium text-yellow-400">RM {z.zakat_amount.toFixed(2)}</p>
+                                            <p className="text-sm font-semibold text-amber-600">RM {z.zakat_amount.toFixed(2)}</p>
                                         </div>
                                     ))}
-                                </CardContent>
-                            </Card>
+                                </div>
+                            </div>
                         )}
                     </>
                 )}
 
-                {/* RAMADAN TAB */}
+                {/* ============================== RAMADAN TAB ============================== */}
                 {activeTab === 'ramadan' && (
                     <>
-                        <h2 className="text-xl font-bold text-white">🌙 Ramadan Mode</h2>
+                        <h2 className="text-xl font-bold text-slate-800">🌙 Ramadan Mode</h2>
 
                         {ramadanStats?.isActive ? (
                             <>
-                                <Card className="glass-card border-purple-500/20 overflow-hidden">
-                                    <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-yellow-600/5" />
-                                    <CardContent className="relative pt-6 text-center">
-                                        <p className="text-sm text-slate-400 mb-1">Ramadan Day</p>
-                                        <p className="text-5xl font-bold text-white mb-2">{ramadanStats.day}</p>
-                                        <p className="text-sm text-purple-300">of 30</p>
-                                        <Progress value={(ramadanStats.day / 30) * 100} className="h-2 mt-3" />
-                                    </CardContent>
-                                </Card>
-
-                                <div className="grid grid-cols-2 gap-3">
-                                    <Card className="glass-card border-blue-500/20">
-                                        <CardContent className="pt-4 text-center">
-                                            <p className="text-xs text-slate-400">☀️ Sahur Total</p>
-                                            <p className="text-xl font-bold text-blue-400">RM {ramadanStats.sahurTotal.toFixed(2)}</p>
-                                        </CardContent>
-                                    </Card>
-                                    <Card className="glass-card border-orange-500/20">
-                                        <CardContent className="pt-4 text-center">
-                                            <p className="text-xs text-slate-400">🌅 Iftar Total</p>
-                                            <p className="text-xl font-bold text-orange-400">RM {ramadanStats.iftarTotal.toFixed(2)}</p>
-                                        </CardContent>
-                                    </Card>
+                                <div className="liquid-glass liquid-gradient-indigo p-6 text-center overflow-hidden animate-fade-up">
+                                    <p className="text-sm text-slate-500 mb-1">Ramadan Day</p>
+                                    <p className="text-5xl font-extrabold text-slate-800 mb-2">{ramadanStats.day}</p>
+                                    <p className="text-sm text-indigo-500">of 30</p>
+                                    <div className="w-full h-2 bg-slate-200/40 rounded-full overflow-hidden mt-3">
+                                        <div
+                                            className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full transition-all"
+                                            style={{ width: `${(ramadanStats.day / 30) * 100}%` }}
+                                        />
+                                    </div>
                                 </div>
 
-                                <Card className="glass-card border-green-500/20">
-                                    <CardContent className="pt-4 flex items-center justify-between">
-                                        <div>
-                                            <p className="text-sm text-slate-400">Ramadan Sedekah Streak</p>
-                                            <p className="text-2xl font-bold text-green-400">{ramadanStats.sedekahStreak} days 🔥</p>
-                                        </div>
-                                        <p className="text-sm text-slate-400">Avg: RM {ramadanStats.dailyAverage.toFixed(2)}/day</p>
-                                    </CardContent>
-                                </Card>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="liquid-glass liquid-gradient-sky p-4 text-center">
+                                        <p className="text-xs text-slate-500">☀️ Sahur Total</p>
+                                        <p className="text-xl font-bold text-sky-600">RM {ramadanStats.sahurTotal.toFixed(2)}</p>
+                                    </div>
+                                    <div className="liquid-glass liquid-gradient-coral p-4 text-center">
+                                        <p className="text-xs text-slate-500">🌅 Iftar Total</p>
+                                        <p className="text-xl font-bold text-orange-600">RM {ramadanStats.iftarTotal.toFixed(2)}</p>
+                                    </div>
+                                </div>
+
+                                <div className="liquid-glass liquid-gradient-emerald p-5 flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm text-slate-500">Ramadan Sedekah Streak</p>
+                                        <p className="text-2xl font-bold text-emerald-600">{ramadanStats.sedekahStreak} days 🔥</p>
+                                    </div>
+                                    <p className="text-sm text-slate-400">Avg: RM {ramadanStats.dailyAverage.toFixed(2)}/day</p>
+                                </div>
                             </>
                         ) : (
-                            <Card className="glass-card border-purple-500/20">
-                                <CardContent className="pt-8 pb-8 text-center space-y-4">
-                                    <div className="text-5xl">🌙</div>
-                                    <h3 className="text-lg font-semibold text-white">Ramadan Mode Inactive</h3>
-                                    <p className="text-sm text-slate-400">
-                                        Ramadan mode will automatically activate during the holy month. Your sahur, iftar spending, and sedekah streaks will be tracked here.
-                                    </p>
-                                </CardContent>
-                            </Card>
+                            <div className="liquid-glass p-8 text-center space-y-4">
+                                <div className="text-5xl">🌙</div>
+                                <h3 className="text-lg font-semibold text-slate-700">Ramadan Mode Inactive</h3>
+                                <p className="text-sm text-slate-400">
+                                    Ramadan mode will automatically activate during the holy month. Your sahur, iftar spending, and sedekah streaks will be tracked here.
+                                </p>
+                            </div>
                         )}
                     </>
                 )}
             </div>
 
-            {/* Bottom Navigation */}
-            <div className="fixed bottom-0 left-0 right-0 z-50 glass-card rounded-none border-x-0 border-b-0">
-                <div className="max-w-lg mx-auto flex justify-around items-center py-2 pb-[env(safe-area-inset-bottom)]">
+            {/* ============ BOTTOM NAVIGATION ============ */}
+            <div className="fixed bottom-0 left-0 right-0 z-50 liquid-glass-strong" style={{ borderRadius: '1.25rem 1.25rem 0 0' }}>
+                <div className="max-w-lg mx-auto flex justify-around items-center py-2 pb-[max(env(safe-area-inset-bottom),0.5rem)]">
                     {NAV_ITEMS.map(item => (
                         <button
                             key={item.key}
                             onClick={() => setActiveTab(item.key)}
-                            className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all ${activeTab === item.key
-                                ? 'text-purple-400 bg-purple-500/10'
-                                : 'text-slate-500 hover:text-slate-300'
+                            className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-200 ${activeTab === item.key
+                                    ? 'text-indigo-600 bg-indigo-50/60 scale-105'
+                                    : 'text-slate-400 hover:text-slate-600'
                                 }`}
                         >
                             <span className="text-xl">{item.icon}</span>
@@ -660,6 +550,47 @@ export default function DashboardPage() {
                     ))}
                 </div>
             </div>
+
+            {/* ============ MODALS ============ */}
+            <Modal open={showExpenseForm} onClose={() => setShowExpenseForm(false)} title="Add Expense">
+                <div className="space-y-4">
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-medium text-slate-600">Amount (RM)</label>
+                        <input type="number" step="0.01" placeholder="0.00" value={expenseAmount} onChange={e => setExpenseAmount(e.target.value)} className="w-full h-12 liquid-input" />
+                    </div>
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-medium text-slate-600">Category</label>
+                        <select
+                            value={expenseCategory}
+                            onChange={e => setExpenseCategory(e.target.value as ExpenseCategory)}
+                            className="w-full h-12 liquid-input appearance-none cursor-pointer"
+                        >
+                            {EXPENSE_CATEGORIES.map(c => (
+                                <option key={c.value} value={c.value}>{c.icon} {c.label}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-medium text-slate-600">Description (optional)</label>
+                        <input placeholder="e.g. Nasi Lemak" value={expenseDesc} onChange={e => setExpenseDesc(e.target.value)} className="w-full h-12 liquid-input" />
+                    </div>
+                    <button onClick={handleAddExpense} className="w-full liquid-btn liquid-btn-primary h-12 text-base">Save Expense</button>
+                </div>
+            </Modal>
+
+            <Modal open={showSedekahForm} onClose={() => setShowSedekahForm(false)} title="Record Sedekah">
+                <div className="space-y-4">
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-medium text-slate-600">Amount (RM)</label>
+                        <input type="number" step="0.01" placeholder="0.00" value={sedekahAmount} onChange={e => setSedekahAmount(e.target.value)} className="w-full h-12 liquid-input" />
+                    </div>
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-medium text-slate-600">Recipient (optional)</label>
+                        <input placeholder="e.g. Masjid Al-Falah" value={sedekahRecipient} onChange={e => setSedekahRecipient(e.target.value)} className="w-full h-12 liquid-input" />
+                    </div>
+                    <button onClick={handleAddSedekah} className="w-full liquid-btn liquid-btn-emerald h-12 text-base">Record Sedekah 🤲</button>
+                </div>
+            </Modal>
         </div>
     );
 }

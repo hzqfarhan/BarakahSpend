@@ -1,101 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BarakahSpend — Offline</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #0a0a1a 0%, #1a103d 50%, #0a0a1a 100%);
-      color: #e2e8f0;
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #eef1f6;
+      background-image:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 90%, rgba(16, 185, 129, 0.05) 0%, transparent 60%);
+      color: #1a1d2e;
+      padding: 1rem;
     }
-    .container {
-      text-align: center;
-      padding: 2rem;
+
+    .card {
       max-width: 400px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 1.25rem;
+      box-shadow:
+        0 8px 32px rgba(31, 38, 80, 0.08),
+        inset 0 1px 1px rgba(255, 255, 255, 0.8);
+      padding: 2.5rem 2rem;
+      text-align: center;
     }
+
     .icon {
-      font-size: 4rem;
-      margin-bottom: 1.5rem;
-      animation: float 3s ease-in-out infinite;
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
     }
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
+
     h1 {
-      font-size: 1.75rem;
+      font-size: 1.5rem;
       font-weight: 700;
-      margin-bottom: 0.75rem;
-      background: linear-gradient(135deg, #a78bfa, #7c3aed);
+      color: #1a1d2e;
+      margin-bottom: 0.5rem;
+    }
+
+    .brand {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
+
     p {
-      color: #94a3b8;
+      color: #64748b;
+      font-size: 0.9rem;
       line-height: 1.6;
       margin-bottom: 1.5rem;
     }
-    .status {
+
+    .btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: rgba(124, 58, 237, 0.15);
-      border: 1px solid rgba(124, 58, 237, 0.3);
-      border-radius: 9999px;
-      font-size: 0.875rem;
-      color: #a78bfa;
-    }
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #ef4444;
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-    .retry-btn {
-      margin-top: 1.5rem;
+      justify-content: center;
       padding: 0.75rem 2rem;
-      background: linear-gradient(135deg, #7c3aed, #a855f7);
-      color: white;
+      border-radius: 99px;
       border: none;
-      border-radius: 12px;
-      font-size: 1rem;
       font-weight: 600;
+      font-size: 0.95rem;
       cursor: pointer;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7);
+      color: white;
+      box-shadow:
+        0 4px 20px rgba(99, 102, 241, 0.35),
+        inset 0 1px 1px rgba(255, 255, 255, 0.3);
       transition: transform 0.2s, box-shadow 0.2s;
     }
-    .retry-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);
+
+    .btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow:
+        0 6px 28px rgba(99, 102, 241, 0.45),
+        inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    }
+
+    .btn:active {
+      transform: translateY(0) scale(0.98);
     }
   </style>
 </head>
+
 <body>
-  <div class="container">
-    <div class="icon">🕌</div>
-    <h1>BarakahSpend</h1>
-    <p>You are currently offline. Your data is safely stored on your device and will sync automatically when you reconnect.</p>
-    <div class="status">
-      <span class="dot"></span>
-      Offline Mode
-    </div>
-    <br />
-    <button class="retry-btn" onclick="window.location.reload()">
-      Try Again
-    </button>
+  <div class="card">
+    <div class="icon">📡</div>
+    <h1><span class="brand">BarakahSpend</span></h1>
+    <p>You are currently offline. Don't worry — your data is saved locally and will sync automatically when you're back
+      online.</p>
+    <button class="btn" onclick="window.location.reload()">Try Again</button>
   </div>
 </body>
+
 </html>

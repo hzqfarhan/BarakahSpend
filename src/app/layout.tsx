@@ -32,9 +32,9 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  themeColor: '#7c3aed',
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: '#eef1f6',
 };
 
 export default function RootLayout({
@@ -43,13 +43,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <head>
         <link rel="manifest" href="/manifest.webmanifest" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
-      <body className={`${inter.variable} antialiased`}>
+      <body
+        className={`${inter.variable} antialiased`}
+        style={{ backgroundColor: '#eef1f6', color: '#1a1d2e', colorScheme: 'light' }}
+      >
         <Providers>{children}</Providers>
       </body>
     </html>

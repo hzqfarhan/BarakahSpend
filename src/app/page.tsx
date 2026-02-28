@@ -1,43 +1,56 @@
 import Link from 'next/link';
 
+const FEATURES = [
+  { icon: '🕌', text: 'Masjid SaaS', gradient: 'from-indigo-400/20 to-violet-400/15' },
+  { icon: '🤲', text: 'Sedekah Tracker', gradient: 'from-emerald-400/20 to-teal-400/15' },
+  { icon: '💰', text: 'Zakat Calculator', gradient: 'from-amber-400/20 to-yellow-400/15' },
+  { icon: '🌙', text: 'Ramadan Mode', gradient: 'from-purple-400/20 to-pink-400/15' },
+  { icon: '📊', text: 'Barakah Score', gradient: 'from-sky-400/20 to-cyan-400/15' },
+  { icon: '🤖', text: 'AI Advisor', gradient: 'from-rose-400/20 to-orange-400/15' },
+];
+
+const STATS = [
+  { value: '100%', label: 'Offline Ready' },
+  { value: '2.5%', label: 'Zakat Auto-Calc' },
+  { value: '∞', label: 'Barakah Potential' },
+];
+
 export default function Home() {
   return (
     <div className="relative min-h-screen overflow-hidden">
-      {/* Background effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a1a] via-[#1a103d] to-[#0a0a1a]" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-purple-600/10 rounded-full blur-[120px]" />
-      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-pink-600/10 rounded-full blur-[100px]" />
+      {/* Background orbs */}
+      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-indigo-300/15 blur-[120px] animate-float" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-emerald-300/12 blur-[100px] animate-float stagger-3" />
+      <div className="absolute top-[30%] right-[10%] w-[300px] h-[300px] rounded-full bg-pink-300/10 blur-[80px] animate-float stagger-5" />
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-12">
-        {/* Logo & Badge */}
-        <div className="mb-8 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-6 text-sm font-medium rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20">
-            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-            Offline-First PWA
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-16">
+
+        {/* Online badge */}
+        <div className="animate-fade-up mb-8">
+          <div className="liquid-badge bg-emerald-50/60 text-emerald-700 border-emerald-200/50">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            Offline-First • Works Everywhere
           </div>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-4">
+        </div>
+
+        {/* Hero title */}
+        <div className="text-center mb-8 animate-fade-up stagger-1">
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-4">
             <span className="gradient-text">Barakah</span>
-            <span className="text-white">Spend</span>
+            <span className="text-slate-800">Spend</span>
           </h1>
-          <p className="text-lg md:text-xl text-slate-400 max-w-xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl text-slate-500 max-w-xl mx-auto leading-relaxed">
             AI-powered Islamic financial companion for Malaysian Muslims, masjid committees &amp; communities.
           </p>
         </div>
 
-        {/* Feature Pills */}
-        <div className="flex flex-wrap justify-center gap-3 mb-10 max-w-lg">
-          {[
-            { icon: '🕌', text: 'Masjid SaaS' },
-            { icon: '🤲', text: 'Sedekah Tracker' },
-            { icon: '💰', text: 'Zakat Calculator' },
-            { icon: '🌙', text: 'Ramadan Mode' },
-            { icon: '📊', text: 'Barakah Score' },
-            { icon: '🤖', text: 'AI Advisor' },
-          ].map((f) => (
+        {/* Feature pills */}
+        <div className="flex flex-wrap justify-center gap-3 mb-12 max-w-lg animate-fade-up stagger-2">
+          {FEATURES.map((f) => (
             <span
               key={f.text}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full glass-card text-slate-300"
+              className={`liquid-glass-subtle inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-slate-700 bg-gradient-to-br ${f.gradient} hover:scale-105 transition-transform cursor-default`}
             >
               {f.icon} {f.text}
             </span>
@@ -45,34 +58,27 @@ export default function Home() {
         </div>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-16">
-          <Link
-            href="/signup"
-            className="inline-flex items-center justify-center px-8 py-3.5 text-base font-semibold text-white rounded-xl bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 transition-all duration-300 shadow-lg shadow-purple-600/30 hover:shadow-purple-500/40 hover:-translate-y-0.5"
-          >
+        <div className="flex flex-col sm:flex-row gap-4 mb-16 animate-fade-up stagger-3">
+          <Link href="/signup" className="liquid-btn liquid-btn-primary text-base px-10 py-4">
             Get Started — It&apos;s Free
           </Link>
-          <Link
-            href="/login"
-            className="inline-flex items-center justify-center px-8 py-3.5 text-base font-semibold text-purple-300 rounded-xl border border-purple-500/30 hover:bg-purple-500/10 transition-all duration-300"
-          >
+          <Link href="/login" className="liquid-btn liquid-btn-glass text-base px-10 py-4">
             Sign In
           </Link>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-8 text-center">
-          {[
-            { value: '100%', label: 'Offline Ready' },
-            { value: '2.5%', label: 'Zakat Auto-Calc' },
-            { value: '∞', label: 'Barakah Potential' },
-          ].map((s) => (
-            <div key={s.label}>
-              <div className="text-2xl md:text-3xl font-bold text-white">{s.value}</div>
-              <div className="text-sm text-slate-500 mt-1">{s.label}</div>
-            </div>
-          ))}
+        <div className="liquid-glass px-8 py-6 animate-fade-up stagger-4">
+          <div className="grid grid-cols-3 gap-8 text-center">
+            {STATS.map((s) => (
+              <div key={s.label}>
+                <div className="text-2xl md:text-3xl font-bold text-slate-800">{s.value}</div>
+                <div className="text-sm text-slate-400 mt-1">{s.label}</div>
+              </div>
+            ))}
+          </div>
         </div>
+
       </div>
     </div>
   );
