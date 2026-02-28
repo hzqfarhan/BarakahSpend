@@ -667,6 +667,110 @@ export default function DashboardPage() {
                         </>
                     )}
 
+                    {/* ============================== MASJID TAB ============================== */}
+                    {activeTab === 'masjid' && (
+                        <div className="space-y-5 animate-fade-up">
+                            <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+                                <Ico src="/icons/mosque.png" size={28} />
+                                Masjid Admin
+                            </h2>
+
+                            {/* Create / Join Org */}
+                            <div className="liquid-glass p-6" style={{ borderRadius: '1.5rem' }}>
+                                <h3 className="text-lg font-semibold text-slate-800 mb-4">Organisasi Anda</h3>
+                                <p className="text-sm text-slate-500 mb-4">
+                                    Cipta atau sertai organisasi masjid untuk menjejaki derma dan perbelanjaan secara telus.
+                                </p>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <button
+                                        onClick={() => toast.info('Fungsi Cipta Organisasi akan datang. Hubungi admin untuk setup.')}
+                                        className="liquid-btn liquid-btn-primary text-sm py-3"
+                                    >
+                                        Cipta Organisasi Baru
+                                    </button>
+                                    <button
+                                        onClick={() => toast.info('Fungsi Sertai Organisasi akan datang. Minta kod jemputan dari admin.')}
+                                        className="liquid-btn liquid-btn-glass text-sm py-3"
+                                    >
+                                        Sertai Organisasi
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Donation Categories Overview */}
+                            <div className="liquid-glass p-6" style={{ borderRadius: '1.5rem' }}>
+                                <h3 className="text-lg font-semibold text-slate-800 mb-4">Kategori Derma</h3>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                    {[
+                                        { label: 'Tabung Iftar', icon: '/icons/sedekah.png', color: '#a855f7' },
+                                        { label: 'Tabung Masjid', icon: '/icons/mosque.png', color: '#6366f1' },
+                                        { label: 'Anak Yatim', icon: '/icons/family.png', color: '#ec4899' },
+                                        { label: 'Pendidikan', icon: '/icons/savings.png', color: '#3b82f6' },
+                                        { label: 'Pembinaan', icon: '/icons/debt.png', color: '#f59e0b' },
+                                        { label: 'Derma Am', icon: '/icons/halal-food.png', color: '#10b981' },
+                                    ].map(cat => (
+                                        <div key={cat.label} className="liquid-glass-subtle p-4 flex flex-col items-center gap-2 hover:scale-[1.03] transition-transform cursor-pointer" style={{ borderRadius: '1rem' }}>
+                                            <div className="w-12 h-12 rounded-full flex items-center justify-center shadow-inner" style={{ background: `${cat.color}15` }}>
+                                                <Ico src={cat.icon} size={24} />
+                                            </div>
+                                            <span className="text-xs font-medium text-slate-600 text-center">{cat.label}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* QR Code / Transparency */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="liquid-glass p-6" style={{ borderRadius: '1.5rem' }}>
+                                    <h3 className="text-lg font-semibold text-slate-800 mb-3">QR Derma</h3>
+                                    <p className="text-sm text-slate-500 mb-4">
+                                        Jana kod QR untuk setiap kategori derma. Penderma boleh scan untuk menderma terus.
+                                    </p>
+                                    <div className="liquid-glass-subtle p-8 flex flex-col items-center gap-3" style={{ borderRadius: '1rem' }}>
+                                        <div className="w-32 h-32 border-2 border-dashed border-slate-300 rounded-xl flex items-center justify-center">
+                                            <span className="text-xs text-slate-400 text-center px-2">Pilih organisasi untuk jana QR</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="liquid-glass p-6" style={{ borderRadius: '1.5rem' }}>
+                                    <h3 className="text-lg font-semibold text-slate-800 mb-3">Ketelusan Kewangan</h3>
+                                    <p className="text-sm text-slate-500 mb-4">
+                                        Halaman awam untuk tunjukkan jumlah derma dan perbelanjaan masjid secara telus.
+                                    </p>
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between items-center p-3 rounded-xl bg-emerald-50/60">
+                                            <span className="text-sm text-slate-600">Jumlah Derma Diterima</span>
+                                            <span className="text-sm font-bold text-emerald-600">RM 0.00</span>
+                                        </div>
+                                        <div className="flex justify-between items-center p-3 rounded-xl bg-red-50/60">
+                                            <span className="text-sm text-slate-600">Jumlah Perbelanjaan</span>
+                                            <span className="text-sm font-bold text-red-500">RM 0.00</span>
+                                        </div>
+                                        <div className="flex justify-between items-center p-3 rounded-xl bg-indigo-50/60">
+                                            <span className="text-sm text-slate-600">Baki</span>
+                                            <span className="text-sm font-bold text-indigo-600">RM 0.00</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Role Info */}
+                            <div className="liquid-glass-subtle p-4 flex items-center gap-3" style={{ borderRadius: '1rem' }}>
+                                <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-slate-600">
+                                        <span className="font-semibold">Akses Berdasarkan Peranan:</span> Admin boleh urus semua, Bendahari boleh urus kewangan, Viewer boleh lihat sahaja.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* ============================== CHAT TAB ============================== */}
                     {activeTab === 'chat' && (
                         <div className="liquid-glass overflow-hidden animate-fade-up" style={{ height: 'calc(100vh - 10rem)' }}>

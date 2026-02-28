@@ -93,6 +93,19 @@ export function IconCollapse({ size = 22, className }: IconProps) {
     );
 }
 
+export function IconMasjid({ size = 22, className }: IconProps) {
+    return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
+            <path d="M6 21V12M18 21V12" />
+            <path d="M4 21h16" />
+            <path d="M12 3C9 3 6 7 6 12h12c0-5-3-9-6-9z" />
+            <path d="M9 21v-4a3 3 0 016 0v4" />
+            <path d="M3 12h2M19 12h2" />
+            <circle cx="12" cy="9" r="1" />
+        </svg>
+    );
+}
+
 export function IconUpload({ size = 22, className }: IconProps) {
     return (
         <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>

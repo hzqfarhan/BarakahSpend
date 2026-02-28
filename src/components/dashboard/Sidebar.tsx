@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import {
     IconHome, IconExpenses, IconSedekah, IconZakat,
-    IconRamadan, IconChat, IconSignOut, IconCollapse,
+    IconRamadan, IconChat, IconSignOut, IconCollapse, IconMasjid,
 } from '@/components/icons';
 
-export type NavTab = 'home' | 'expenses' | 'sedekah' | 'zakat' | 'ramadan' | 'chat';
+export type NavTab = 'home' | 'expenses' | 'sedekah' | 'zakat' | 'ramadan' | 'masjid' | 'chat';
 
 const NAV_ITEMS: { key: NavTab; label: string; Icon: React.FC<{ size?: number; className?: string }> }[] = [
     { key: 'home', label: 'Home', Icon: IconHome },
@@ -15,6 +15,7 @@ const NAV_ITEMS: { key: NavTab; label: string; Icon: React.FC<{ size?: number; c
     { key: 'sedekah', label: 'Sedekah', Icon: IconSedekah },
     { key: 'zakat', label: 'Zakat', Icon: IconZakat },
     { key: 'ramadan', label: 'Ramadan', Icon: IconRamadan },
+    { key: 'masjid', label: 'Masjid', Icon: IconMasjid },
     { key: 'chat', label: 'AI Chat', Icon: IconChat },
 ];
 
@@ -100,8 +101,8 @@ export function Sidebar({
                         key={item.key}
                         onClick={() => onTabChange(item.key)}
                         className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${activeTab === item.key
-                                ? 'bg-indigo-50/70 text-indigo-600 shadow-sm shadow-indigo-100/50'
-                                : 'text-slate-500 hover:bg-slate-100/50 hover:text-slate-700'
+                            ? 'bg-indigo-50/70 text-indigo-600 shadow-sm shadow-indigo-100/50'
+                            : 'text-slate-500 hover:bg-slate-100/50 hover:text-slate-700'
                             } ${collapsed ? 'justify-center' : ''}`}
                         title={collapsed ? item.label : undefined}
                     >
@@ -147,8 +148,8 @@ export function BottomNav({ activeTab, onTabChange }: { activeTab: NavTab; onTab
                         key={item.key}
                         onClick={() => onTabChange(item.key)}
                         className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-200 ${activeTab === item.key
-                                ? 'text-indigo-600 bg-indigo-50/60 scale-105'
-                                : 'text-slate-400 hover:text-slate-600'
+                            ? 'text-indigo-600 bg-indigo-50/60 scale-105'
+                            : 'text-slate-400 hover:text-slate-600'
                             }`}
                     >
                         <item.Icon size={20} />
