@@ -7,13 +7,13 @@ import { createClient } from '@/services/supabase/client';
 // ================================================
 
 export const EXPENSE_CATEGORIES = [
-    { value: 'makanan_halal', label: 'Makanan Halal', icon: '🍽️', color: '#22c55e' },
-    { value: 'nafkah_keluarga', label: 'Nafkah Keluarga', icon: '👨‍👩‍👧‍👦', color: '#3b82f6' },
-    { value: 'sedekah', label: 'Sedekah', icon: '🤲', color: '#a855f7' },
-    { value: 'wakaf', label: 'Wakaf', icon: '🕌', color: '#ec4899' },
-    { value: 'hutang', label: 'Hutang', icon: '📋', color: '#ef4444' },
-    { value: 'simpanan', label: 'Simpanan', icon: '💰', color: '#eab308' },
-    { value: 'hiburan', label: 'Hiburan', icon: '🎮', color: '#6366f1' },
+    { value: 'makanan_halal', label: 'Makanan Halal', icon: '/icons/halal-food.png', color: '#22c55e' },
+    { value: 'nafkah_keluarga', label: 'Nafkah Keluarga', icon: '/icons/family.png', color: '#3b82f6' },
+    { value: 'sedekah', label: 'Sedekah', icon: '/icons/sedekah.png', color: '#a855f7' },
+    { value: 'wakaf', label: 'Wakaf', icon: '/icons/mosque.png', color: '#ec4899' },
+    { value: 'hutang', label: 'Hutang', icon: '/icons/debt.png', color: '#ef4444' },
+    { value: 'simpanan', label: 'Simpanan', icon: '/icons/savings.png', color: '#eab308' },
+    { value: 'hiburan', label: 'Hiburan', icon: '/icons/gaming.png', color: '#6366f1' },
 ] as const;
 
 export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number]['value'];

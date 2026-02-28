@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { createClient } from '@/services/supabase/client';
 
 export default function SignupPage() {
@@ -53,7 +54,7 @@ export default function SignupPage() {
         return (
             <div className="min-h-screen flex items-center justify-center px-4">
                 <div className="w-full max-w-md liquid-glass p-8 text-center space-y-5 animate-fade-up">
-                    <div className="text-5xl">✅</div>
+                    <Image src="/icons/checkmark.svg" alt="Success" width={48} height={48} className="mx-auto" />
                     <h2 className="text-xl font-bold text-slate-800">Check your email</h2>
                     <p className="text-slate-500 text-sm">
                         We&apos;ve sent a confirmation link to <span className="text-indigo-500 font-medium">{email}</span>.

@@ -2,12 +2,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 const FEATURES = [
-  { icon: '🕌', text: 'Masjid SaaS', gradient: 'from-indigo-400/20 to-violet-400/15' },
-  { icon: '🤲', text: 'Sedekah Tracker', gradient: 'from-emerald-400/20 to-teal-400/15' },
-  { icon: '💰', text: 'Zakat Calculator', gradient: 'from-amber-400/20 to-yellow-400/15' },
-  { icon: '🌙', text: 'Ramadan Mode', gradient: 'from-purple-400/20 to-pink-400/15' },
-  { icon: '📊', text: 'Barakah Score', gradient: 'from-sky-400/20 to-cyan-400/15' },
-  { icon: '🤖', text: 'AI Advisor', gradient: 'from-rose-400/20 to-orange-400/15' },
+  { icon: '/icons/mosque.png', text: 'Masjid SaaS', gradient: 'from-indigo-400/20 to-violet-400/15' },
+  { icon: '/icons/sedekah.png', text: 'Sedekah Tracker', gradient: 'from-emerald-400/20 to-teal-400/15' },
+  { icon: '/icons/savings.png', text: 'Zakat Calculator', gradient: 'from-amber-400/20 to-yellow-400/15' },
+  { icon: '/icons/crescent-moon.png', text: 'Ramadan Mode', gradient: 'from-purple-400/20 to-pink-400/15' },
+  { icon: '/icons/fire-streak.png', text: 'Barakah Score', gradient: 'from-sky-400/20 to-cyan-400/15' },
+  { icon: '/icons/barakahbot.png', text: 'AI Advisor', gradient: 'from-rose-400/20 to-orange-400/15' },
 ];
 
 const STATS = [
@@ -54,7 +54,7 @@ export default function Home() {
               key={f.text}
               className={`liquid-glass-subtle inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-slate-700 bg-gradient-to-br ${f.gradient} hover:scale-105 transition-transform cursor-default`}
             >
-              {f.icon} {f.text}
+              <Image src={f.icon} alt={f.text} width={18} height={18} className="inline-block" /> {f.text}
             </span>
           ))}
         </div>

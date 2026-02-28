@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useAuth } from '@/hooks/use-auth';
 import { useOnlineStatus } from '@/hooks/use-online-status';
 import { useSyncStatus } from '@/hooks/use-sync-status';
+import { usePrayerTimes } from '@/hooks/use-prayer-times';
 import {
     createExpense,
     getLocalExpenses,
@@ -24,11 +25,20 @@ import { toast } from 'sonner';
 
 import { Sidebar, BottomNav, type NavTab } from '@/components/dashboard/Sidebar';
 import { ChatBot } from '@/components/dashboard/ChatBot';
+import { MusicPlayer } from '@/components/dashboard/MusicPlayer';
+
+// ========================
+// Icon helper — renders generated images instead of emoji
+// ========================
+function Ico({ src, size = 20, alt = '' }: { src: string; size?: number; alt?: string }) {
+    return <Image src={src} alt={alt} width={size} height={size} className="inline-block" />;
+}
 
 export default function DashboardPage() {
     const { userId, userName, userEmail, userAvatar, signOut, loading: authLoading, isAuthenticated } = useAuth();
     const isOnline = useOnlineStatus();
     const { pendingCount, hasPending } = useSyncStatus();
+    const prayer = usePrayerTimes();
     const [mounted, setMounted] = useState(false);
     const router = useRouter();
 
@@ -106,7 +116,7 @@ export default function DashboardPage() {
             is_ramadan: isRamadanActive(),
         };
         await createExpense(userId, input);
-        toast.success('Expense added!', { description: hasPending ? 'Will sync when online' : undefined });
+        toast.success('Expense added!');
         setExpenseAmount('');
         setExpenseDesc('');
         setShowExpenseForm(false);
@@ -120,7 +130,7 @@ export default function DashboardPage() {
             recipient: sedekahRecipient || undefined,
             date: new Date().toISOString().split('T')[0],
         });
-        toast.success('Sedekah recorded! 🤲', { description: 'May Allah multiply your reward' });
+        toast.success('Sedekah recorded!', { description: 'May Allah multiply your reward' });
         setSedekahAmount('');
         setSedekahRecipient('');
         setShowSedekahForm(false);
@@ -156,9 +166,7 @@ export default function DashboardPage() {
         );
     }
 
-    // =========================================
-    // INLINE MODAL
-    // =========================================
+    // Inline Modal
     const Modal = ({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) => {
         if (!open) return null;
         return (
@@ -175,9 +183,6 @@ export default function DashboardPage() {
         );
     };
 
-    // =========================================
-    // BARAKAH SCORE TIER COLORS
-    // =========================================
     const tierColors = {
         excellent: { bg: 'bg-emerald-100/60', text: 'text-emerald-700', border: 'border-emerald-200/50' },
         good: { bg: 'bg-sky-100/60', text: 'text-sky-700', border: 'border-sky-200/50' },
@@ -188,7 +193,7 @@ export default function DashboardPage() {
 
     return (
         <div className="min-h-screen flex">
-            {/* ============ SIDEBAR (Desktop/iPad) ============ */}
+            {/* SIDEBAR (Desktop/iPad) */}
             <Sidebar
                 activeTab={activeTab}
                 onTabChange={setActiveTab}
@@ -201,7 +206,7 @@ export default function DashboardPage() {
                 onSignOut={signOut}
             />
 
-            {/* ============ MAIN AREA ============ */}
+            {/* MAIN AREA */}
             <div className="flex-1 min-h-screen pb-safe md:pb-0">
 
                 {/* Mobile Header */}
@@ -223,17 +228,51 @@ export default function DashboardPage() {
                                 </div>
                             </div>
                         </div>
-                        <Image src="/logo.png" alt="BarakahSpend" width={32} height={32} className="rounded-xl" />
+                        <div className="flex items-center gap-2">
+                            <MusicPlayer />
+                            <Image src="/logo.png" alt="BarakahSpend" width={32} height={32} className="rounded-xl" />
+                        </div>
                     </div>
                 </div>
 
-                {/* ============ CONTENT ============ */}
+                {/* CONTENT */}
                 <div className="max-w-4xl mx-auto px-4 md:px-8 py-6 space-y-5">
 
                     {/* ============================== HOME TAB ============================== */}
                     {activeTab === 'home' && (
                         <>
-                            {/* Responsive grid: 2 cols on desktop */}
+                            {/* Date + Prayer Times Bar */}
+                            <div className="liquid-glass p-4 animate-fade-up flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                <div className="flex items-center gap-4">
+                                    <div>
+                                        <p className="text-sm font-semibold text-slate-700">{prayer.gregorianDate}</p>
+                                        {prayer.hijriDate && (
+                                            <p className="text-xs text-indigo-500">{prayer.hijriDate}</p>
+                                        )}
+                                    </div>
+                                    {/* Music toggle — desktop only (mobile has it in header) */}
+                                    <div className="hidden md:block">
+                                        <MusicPlayer />
+                                    </div>
+                                </div>
+                                {prayer.nextPrayer && (
+                                    <div className="flex items-center gap-3">
+                                        <Ico src="/icons/mosque.png" size={24} alt="Prayer" />
+                                        <div className="text-right md:text-left">
+                                            <p className="text-xs text-slate-400">Next: <span className="font-semibold text-slate-700">{prayer.nextPrayer.name}</span></p>
+                                            <p className="text-sm font-bold text-indigo-600">{prayer.nextPrayer.time} <span className="text-xs text-slate-400">({prayer.nextPrayer.countdown})</span></p>
+                                        </div>
+                                        {prayer.iftarTime && ramadanStats?.isActive && (
+                                            <div className="text-right md:text-left ml-3 pl-3 border-l border-slate-200/50">
+                                                <p className="text-xs text-slate-400">Iftar</p>
+                                                <p className="text-sm font-bold text-amber-600">{prayer.iftarTime}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Responsive grid */}
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                                 {/* Barakah Score */}
                                 <div className="liquid-glass overflow-hidden liquid-gradient-indigo p-6 text-center animate-fade-up lg:col-span-2">
@@ -278,9 +317,12 @@ export default function DashboardPage() {
                                 <div className="liquid-glass liquid-gradient-emerald p-5 flex items-center justify-between animate-fade-up stagger-2">
                                     <div>
                                         <p className="text-sm text-slate-500">Sedekah Streak</p>
-                                        <p className="text-2xl font-bold text-emerald-600">{sedekahStreak} days 🔥</p>
+                                        <div className="flex items-center gap-2">
+                                            <p className="text-2xl font-bold text-emerald-600">{sedekahStreak} days</p>
+                                            <Ico src="/icons/fire-streak.png" size={24} alt="streak" />
+                                        </div>
                                     </div>
-                                    <div className="text-4xl">🤲</div>
+                                    <Ico src="/icons/sedekah.png" size={40} alt="Sedekah" />
                                 </div>
                             </div>
 
@@ -290,29 +332,29 @@ export default function DashboardPage() {
                                     onClick={() => setShowExpenseForm(true)}
                                     className="liquid-glass liquid-gradient-indigo p-5 text-center hover:scale-[1.03] transition-transform active:scale-[0.98]"
                                 >
-                                    <span className="text-2xl block mb-1">💸</span>
-                                    <span className="text-xs font-medium text-slate-600">Add Expense</span>
+                                    <Ico src="/icons/wallet.png" size={28} alt="Expense" />
+                                    <span className="text-xs font-medium text-slate-600 block mt-2">Add Expense</span>
                                 </button>
                                 <button
                                     onClick={() => setShowSedekahForm(true)}
                                     className="liquid-glass liquid-gradient-emerald p-5 text-center hover:scale-[1.03] transition-transform active:scale-[0.98]"
                                 >
-                                    <span className="text-2xl block mb-1">🤲</span>
-                                    <span className="text-xs font-medium text-slate-600">Give Sedekah</span>
+                                    <Ico src="/icons/sedekah.png" size={28} alt="Sedekah" />
+                                    <span className="text-xs font-medium text-slate-600 block mt-2">Give Sedekah</span>
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('zakat')}
                                     className="liquid-glass liquid-gradient-amber p-5 text-center hover:scale-[1.03] transition-transform active:scale-[0.98]"
                                 >
-                                    <span className="text-2xl block mb-1">💰</span>
-                                    <span className="text-xs font-medium text-slate-600">Calc Zakat</span>
+                                    <Ico src="/icons/savings.png" size={28} alt="Zakat" />
+                                    <span className="text-xs font-medium text-slate-600 block mt-2">Calc Zakat</span>
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('chat')}
                                     className="liquid-glass liquid-gradient-sky p-5 text-center hover:scale-[1.03] transition-transform active:scale-[0.98]"
                                 >
-                                    <span className="text-2xl block mb-1">🤖</span>
-                                    <span className="text-xs font-medium text-slate-600">Ask AI</span>
+                                    <Ico src="/icons/barakahbot.png" size={28} alt="Chat" />
+                                    <span className="text-xs font-medium text-slate-600 block mt-2">Ask AI</span>
                                 </button>
                             </div>
 
@@ -325,7 +367,7 @@ export default function DashboardPage() {
                                         return (
                                             <div key={exp.id || i} className="flex items-center justify-between py-2.5 border-b border-slate-100/60 last:border-0">
                                                 <div className="flex items-center gap-3">
-                                                    <span className="text-xl">{cat?.icon || '💰'}</span>
+                                                    <Ico src={cat?.icon || '/icons/savings.png'} size={24} alt={cat?.label || ''} />
                                                     <div>
                                                         <p className="text-sm font-medium text-slate-700">{cat?.label || exp.category}</p>
                                                         <p className="text-xs text-slate-400">{exp.description || exp.date}</p>
@@ -334,9 +376,7 @@ export default function DashboardPage() {
                                                 <div className="text-right">
                                                     <p className="text-sm font-semibold text-slate-800">RM {exp.amount.toFixed(2)}</p>
                                                     {!exp.synced && (
-                                                        <span className="liquid-badge bg-amber-50/80 text-amber-600 text-[10px] py-0 px-1.5 border-amber-200/40">
-                                                            pending
-                                                        </span>
+                                                        <span className="liquid-badge bg-amber-50/80 text-amber-600 text-[10px] py-0 px-1.5 border-amber-200/40">pending</span>
                                                     )}
                                                 </div>
                                             </div>
@@ -364,7 +404,7 @@ export default function DashboardPage() {
                                     return (
                                         <div key={cat.value} className="liquid-glass liquid-gradient-indigo p-4">
                                             <div className="flex items-center gap-2 mb-1">
-                                                <span>{cat.icon}</span>
+                                                <Ico src={cat.icon} size={20} alt={cat.label} />
                                                 <span className="text-xs text-slate-500 truncate">{cat.label}</span>
                                             </div>
                                             <p className="text-lg font-bold text-slate-800">RM {total.toFixed(2)}</p>
@@ -380,7 +420,7 @@ export default function DashboardPage() {
                                         return (
                                             <div key={exp.id || i} className="flex items-center justify-between py-2.5 border-b border-slate-100/60 last:border-0">
                                                 <div className="flex items-center gap-3">
-                                                    <span>{cat?.icon}</span>
+                                                    <Ico src={cat?.icon || '/icons/savings.png'} size={20} alt={cat?.label || ''} />
                                                     <div>
                                                         <p className="text-sm font-medium text-slate-700">{exp.description || cat?.label}</p>
                                                         <p className="text-xs text-slate-400">{exp.date}</p>
@@ -406,7 +446,10 @@ export default function DashboardPage() {
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="liquid-glass liquid-gradient-emerald p-4 text-center">
                                     <p className="text-xs text-slate-500">Streak</p>
-                                    <p className="text-3xl font-bold text-emerald-600">{sedekahStreak} 🔥</p>
+                                    <div className="flex items-center justify-center gap-2">
+                                        <p className="text-3xl font-bold text-emerald-600">{sedekahStreak}</p>
+                                        <Ico src="/icons/fire-streak.png" size={28} alt="streak" />
+                                    </div>
                                     <p className="text-xs text-slate-400">consecutive days</p>
                                 </div>
                                 <div className="liquid-glass liquid-gradient-teal p-4 text-center">
@@ -422,15 +465,18 @@ export default function DashboardPage() {
                                 <div className="space-y-1">
                                     {sedekahRecords.map((rec, i) => (
                                         <div key={rec.id || i} className="flex items-center justify-between py-2.5 border-b border-slate-100/60 last:border-0">
-                                            <div>
-                                                <p className="text-sm font-medium text-slate-700">{rec.recipient || 'Sedekah'}</p>
-                                                <p className="text-xs text-slate-400">{rec.date}</p>
+                                            <div className="flex items-center gap-3">
+                                                <Ico src="/icons/sedekah.png" size={20} alt="Sedekah" />
+                                                <div>
+                                                    <p className="text-sm font-medium text-slate-700">{rec.recipient || 'Sedekah'}</p>
+                                                    <p className="text-xs text-slate-400">{rec.date}</p>
+                                                </div>
                                             </div>
                                             <p className="text-sm font-semibold text-emerald-600">RM {rec.amount.toFixed(2)}</p>
                                         </div>
                                     ))}
                                     {sedekahRecords.length === 0 && (
-                                        <p className="text-sm text-slate-400 text-center py-4">No sedekah records yet. Start giving! 🤲</p>
+                                        <p className="text-sm text-slate-400 text-center py-4">No sedekah records yet. Start giving!</p>
                                     )}
                                 </div>
                             </div>
@@ -477,7 +523,7 @@ export default function DashboardPage() {
                                             </div>
                                         </div>
                                         <span className={`liquid-badge ${zakatResult.isNisabEligible ? 'bg-emerald-50/80 text-emerald-700 border-emerald-200/50' : 'bg-red-50/80 text-red-700 border-red-200/50'}`}>
-                                            {zakatResult.isNisabEligible ? '✅ Nisab Eligible — Zakat is obligatory' : '❌ Below Nisab — Zakat is not obligatory'}
+                                            {zakatResult.isNisabEligible ? 'Nisab Eligible — Zakat is obligatory' : 'Below Nisab — Zakat is not obligatory'}
                                         </span>
                                     </div>
                                 )}
@@ -505,7 +551,10 @@ export default function DashboardPage() {
                     {/* ============================== RAMADAN TAB ============================== */}
                     {activeTab === 'ramadan' && (
                         <>
-                            <h2 className="text-xl font-bold text-slate-800">🌙 Ramadan Mode</h2>
+                            <div className="flex items-center gap-2">
+                                <Ico src="/icons/crescent-moon.png" size={24} alt="Ramadan" />
+                                <h2 className="text-xl font-bold text-slate-800">Ramadan Mode</h2>
+                            </div>
 
                             {ramadanStats?.isActive ? (
                                 <>
@@ -514,20 +563,43 @@ export default function DashboardPage() {
                                         <p className="text-5xl font-extrabold text-slate-800 mb-2">{ramadanStats.day}</p>
                                         <p className="text-sm text-indigo-500">of 30</p>
                                         <div className="w-full max-w-md mx-auto h-2 bg-slate-200/40 rounded-full overflow-hidden mt-3">
-                                            <div
-                                                className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full transition-all"
-                                                style={{ width: `${(ramadanStats.day / 30) * 100}%` }}
-                                            />
+                                            <div className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full transition-all" style={{ width: `${(ramadanStats.day / 30) * 100}%` }} />
                                         </div>
                                     </div>
 
+                                    {/* Iftar time card */}
+                                    {prayer.iftarTime && (
+                                        <div className="liquid-glass liquid-gradient-amber p-5 flex items-center justify-between animate-fade-up stagger-1">
+                                            <div className="flex items-center gap-3">
+                                                <Ico src="/icons/iftar.png" size={32} alt="Iftar" />
+                                                <div>
+                                                    <p className="text-xs text-slate-500">Buka Puasa</p>
+                                                    <p className="text-2xl font-bold text-amber-600">{prayer.iftarTime}</p>
+                                                </div>
+                                            </div>
+                                            {prayer.times?.Fajr && (
+                                                <div className="text-right">
+                                                    <div className="flex items-center gap-2 justify-end">
+                                                        <Ico src="/icons/sahur.png" size={24} alt="Sahur" />
+                                                        <div>
+                                                            <p className="text-xs text-slate-500">Imsak</p>
+                                                            <p className="text-lg font-bold text-sky-600">{prayer.times.Fajr}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
                                     <div className="grid grid-cols-2 gap-3">
                                         <div className="liquid-glass liquid-gradient-sky p-4 text-center">
-                                            <p className="text-xs text-slate-500">☀️ Sahur Total</p>
+                                            <Ico src="/icons/sahur.png" size={24} alt="Sahur" />
+                                            <p className="text-xs text-slate-500 mt-1">Sahur Total</p>
                                             <p className="text-xl font-bold text-sky-600">RM {ramadanStats.sahurTotal.toFixed(2)}</p>
                                         </div>
                                         <div className="liquid-glass liquid-gradient-coral p-4 text-center">
-                                            <p className="text-xs text-slate-500">🌅 Iftar Total</p>
+                                            <Ico src="/icons/iftar.png" size={24} alt="Iftar" />
+                                            <p className="text-xs text-slate-500 mt-1">Iftar Total</p>
                                             <p className="text-xl font-bold text-orange-600">RM {ramadanStats.iftarTotal.toFixed(2)}</p>
                                         </div>
                                     </div>
@@ -535,14 +607,17 @@ export default function DashboardPage() {
                                     <div className="liquid-glass liquid-gradient-emerald p-5 flex items-center justify-between">
                                         <div>
                                             <p className="text-sm text-slate-500">Ramadan Sedekah Streak</p>
-                                            <p className="text-2xl font-bold text-emerald-600">{ramadanStats.sedekahStreak} days 🔥</p>
+                                            <div className="flex items-center gap-2">
+                                                <p className="text-2xl font-bold text-emerald-600">{ramadanStats.sedekahStreak} days</p>
+                                                <Ico src="/icons/fire-streak.png" size={24} alt="streak" />
+                                            </div>
                                         </div>
                                         <p className="text-sm text-slate-400">Avg: RM {ramadanStats.dailyAverage.toFixed(2)}/day</p>
                                     </div>
                                 </>
                             ) : (
                                 <div className="liquid-glass p-8 text-center space-y-4">
-                                    <div className="text-5xl">🌙</div>
+                                    <Ico src="/icons/crescent-moon.png" size={48} alt="Ramadan" />
                                     <h3 className="text-lg font-semibold text-slate-700">Ramadan Mode Inactive</h3>
                                     <p className="text-sm text-slate-400 max-w-md mx-auto">
                                         Ramadan mode will automatically activate during the holy month. Your sahur, iftar spending, and sedekah streaks will be tracked here.
@@ -566,10 +641,10 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            {/* ============ BOTTOM NAV (Mobile) ============ */}
+            {/* BOTTOM NAV (Mobile) */}
             <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
 
-            {/* ============ MODALS ============ */}
+            {/* MODALS */}
             <Modal open={showExpenseForm} onClose={() => setShowExpenseForm(false)} title="Add Expense">
                 <div className="space-y-4">
                     <div className="space-y-1.5">
@@ -578,13 +653,9 @@ export default function DashboardPage() {
                     </div>
                     <div className="space-y-1.5">
                         <label className="text-sm font-medium text-slate-600">Category</label>
-                        <select
-                            value={expenseCategory}
-                            onChange={e => setExpenseCategory(e.target.value as ExpenseCategory)}
-                            className="w-full h-12 liquid-input appearance-none cursor-pointer"
-                        >
+                        <select value={expenseCategory} onChange={e => setExpenseCategory(e.target.value as ExpenseCategory)} className="w-full h-12 liquid-input appearance-none cursor-pointer">
                             {EXPENSE_CATEGORIES.map(c => (
-                                <option key={c.value} value={c.value}>{c.icon} {c.label}</option>
+                                <option key={c.value} value={c.value}>{c.label}</option>
                             ))}
                         </select>
                     </div>
@@ -606,7 +677,7 @@ export default function DashboardPage() {
                         <label className="text-sm font-medium text-slate-600">Recipient (optional)</label>
                         <input placeholder="e.g. Masjid Al-Falah" value={sedekahRecipient} onChange={e => setSedekahRecipient(e.target.value)} className="w-full h-12 liquid-input" />
                     </div>
-                    <button onClick={handleAddSedekah} className="w-full liquid-btn liquid-btn-emerald h-12 text-base">Record Sedekah 🤲</button>
+                    <button onClick={handleAddSedekah} className="w-full liquid-btn liquid-btn-emerald h-12 text-base">Record Sedekah</button>
                 </div>
             </Modal>
         </div>
