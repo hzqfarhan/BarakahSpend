@@ -672,6 +672,16 @@ export default function DashboardPage() {
                                 onClose={() => setActiveTab('home')}
                                 userAvatar={userAvatar}
                                 userName={userName}
+                                financialContext={{
+                                    totalExpenses: expenses.reduce((s, e) => s + e.amount, 0),
+                                    totalSedekah: sedekahRecords.reduce((s, e) => s + e.amount, 0),
+                                    totalSavings: expenses.filter(e => e.category === 'simpanan').reduce((s, e) => s + e.amount, 0),
+                                    totalDebt: expenses.filter(e => e.category === 'hutang').reduce((s, e) => s + e.amount, 0),
+                                    barakahScore: barakahScore?.score ?? 0,
+                                    barakahTier: barakahScore?.tier ?? 'needs_improvement',
+                                    sedekahStreak,
+                                    isRamadan: ramadanStats?.isActive ?? false,
+                                }}
                             />
                         </div>
                     )}

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const SYSTEM_PROMPT = `You are "BarakahBot", a friendly and knowledgeable Islamic financial advisor for Malaysian Muslims.
+const BASE_SYSTEM_PROMPT = `You are "BarakahBot", a friendly and knowledgeable Islamic financial advisor for Malaysian Muslims.
 
 LANGUAGE RULES (CRITICAL):
 - Detect what language the user writes in
@@ -19,17 +19,47 @@ Your capabilities:
 - Give budgeting advice tailored to Malaysian lifestyle
 - Explain concepts like nisab, haul, wakaf, hibah
 - Suggest ways to increase barakah in finances
+- Assess if the user can afford a purchase based on their financial data
+- Recommend appropriate sedekah amounts based on income and spending
 
 Rules:
 - Keep responses concise (max 3-4 sentences unless the user asks for detail)
 - Use Ringgit Malaysia (RM) as currency
 - If asked about haram products, politely explain halal alternatives
 - Never give fatwa — recommend consulting local ustaz/ulama for religious rulings
-- Do NOT use emoji in your responses. Use text expressions instead.`;
+- Do NOT use emoji in your responses. Use text expressions instead.
+- When giving financial advice, reference the user's actual data if available.`;
+
+interface FinancialContextPayload {
+    totalExpenses: number;
+    totalSedekah: number;
+    totalSavings: number;
+    totalDebt: number;
+    barakahScore: number;
+    barakahTier: string;
+    sedekahStreak: number;
+    isRamadan: boolean;
+}
+
+function buildSystemPrompt(ctx?: FinancialContextPayload | null): string {
+    if (!ctx) return BASE_SYSTEM_PROMPT;
+
+    return `${BASE_SYSTEM_PROMPT}
+
+--- USER FINANCIAL CONTEXT (use this to personalise advice) ---
+Total Monthly Expenses: RM${ctx.totalExpenses.toFixed(2)}
+Total Sedekah Given This Month: RM${ctx.totalSedekah.toFixed(2)}
+Total Savings Category: RM${ctx.totalSavings.toFixed(2)}
+Total Debt Category: RM${ctx.totalDebt.toFixed(2)}
+Barakah Score: ${ctx.barakahScore}/100 (Tier: ${ctx.barakahTier})
+Sedekah Streak: ${ctx.sedekahStreak} consecutive days
+${ctx.isRamadan ? 'It is currently Ramadan. Encourage extra generosity and ibadah.' : ''}
+--- END CONTEXT ---`;
+}
 
 export async function POST(request: Request) {
     try {
-        const { messages } = await request.json();
+        const { messages, financialContext } = await request.json();
 
         const apiKey = process.env.GEMINI_API_KEY;
         if (!apiKey) {
@@ -52,7 +82,7 @@ export async function POST(request: Request) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     contents,
-                    systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+                    systemInstruction: { parts: [{ text: buildSystemPrompt(financialContext) }] },
                     generationConfig: {
                         temperature: 0.8,
                         maxOutputTokens: 800,

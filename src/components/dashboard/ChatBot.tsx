@@ -9,11 +9,23 @@ interface ChatMessage {
     isError?: boolean;
 }
 
+export interface FinancialContext {
+    totalExpenses: number;
+    totalSedekah: number;
+    totalSavings: number;
+    totalDebt: number;
+    barakahScore: number;
+    barakahTier: string;
+    sedekahStreak: number;
+    isRamadan: boolean;
+}
+
 interface ChatBotProps {
     isActive: boolean;
     onClose: () => void;
     userAvatar: string | null;
     userName: string | null;
+    financialContext?: FinancialContext;
 }
 
 const EXAMPLE_PROMPTS = [
@@ -25,7 +37,7 @@ const EXAMPLE_PROMPTS = [
     'Tips menabung untuk pelajar',
 ];
 
-export function ChatBot({ isActive, onClose, userAvatar, userName }: ChatBotProps) {
+export function ChatBot({ isActive, onClose, userAvatar, userName, financialContext }: ChatBotProps) {
     const [messages, setMessages] = useState<ChatMessage[]>([
         {
             role: 'assistant',
@@ -62,6 +74,7 @@ export function ChatBot({ isActive, onClose, userAvatar, userName }: ChatBotProp
                             role: m.role === 'assistant' ? 'model' : 'user',
                             content: m.content,
                         })),
+                    financialContext: financialContext || null,
                 }),
             });
 
