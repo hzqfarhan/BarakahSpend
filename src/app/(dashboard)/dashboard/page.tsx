@@ -30,8 +30,16 @@ import { MusicPlayer } from '@/components/dashboard/MusicPlayer';
 // ========================
 // Icon helper — renders generated images instead of emoji
 // ========================
-function Ico({ src, size = 20, alt = '' }: { src: string; size?: number; alt?: string }) {
-    return <Image src={src} alt={alt} width={size} height={size} className="inline-block" />;
+function Ico({ src, size = 28, alt = '', hover = false }: { src: string; size?: number; alt?: string; hover?: boolean }) {
+    return (
+        <Image
+            src={src}
+            alt={alt}
+            width={size}
+            height={size}
+            className={`inline-block object-contain ${hover ? 'transition-transform duration-200 hover:scale-125' : ''}`}
+        />
+    );
 }
 
 export default function DashboardPage() {
@@ -242,32 +250,36 @@ export default function DashboardPage() {
                     {activeTab === 'home' && (
                         <>
                             {/* Date + Prayer Times Bar */}
-                            <div className="liquid-glass p-4 animate-fade-up flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                                <div className="flex items-center gap-4">
-                                    <div>
-                                        <p className="text-sm font-semibold text-slate-700">{prayer.gregorianDate}</p>
-                                        {prayer.hijriDate && (
-                                            <p className="text-xs text-indigo-500">{prayer.hijriDate}</p>
-                                        )}
-                                    </div>
-                                    {/* Music toggle — desktop only (mobile has it in header) */}
-                                    <div className="hidden md:block">
-                                        <MusicPlayer />
-                                    </div>
-                                </div>
-                                {prayer.nextPrayer && (
-                                    <div className="flex items-center gap-3">
-                                        <Ico src="/icons/mosque.png" size={24} alt="Prayer" />
-                                        <div className="text-right md:text-left">
-                                            <p className="text-xs text-slate-400">Next: <span className="font-semibold text-slate-700">{prayer.nextPrayer.name}</span></p>
-                                            <p className="text-sm font-bold text-indigo-600">{prayer.nextPrayer.time} <span className="text-xs text-slate-400">({prayer.nextPrayer.countdown})</span></p>
+                            <div className="liquid-glass p-4 animate-fade-up">
+                                <div className="flex flex-wrap items-center justify-between gap-3">
+                                    <div className="flex items-center gap-4">
+                                        <div>
+                                            <p className="text-sm font-semibold text-slate-700">{prayer.gregorianDate}</p>
+                                            {prayer.hijriDate && (
+                                                <p className="text-xs text-indigo-500">{prayer.hijriDate}</p>
+                                            )}
                                         </div>
-                                        {prayer.iftarTime && ramadanStats?.isActive && (
-                                            <div className="text-right md:text-left ml-3 pl-3 border-l border-slate-200/50">
-                                                <p className="text-xs text-slate-400">Iftar</p>
-                                                <p className="text-sm font-bold text-amber-600">{prayer.iftarTime}</p>
+                                        <div className="hidden md:block">
+                                            <MusicPlayer />
+                                        </div>
+                                    </div>
+                                    {prayer.nextPrayer && (
+                                        <div className="flex items-center gap-3">
+                                            <Ico src="/icons/mosque.png" size={32} alt="Prayer" hover />
+                                            <div>
+                                                <p className="text-xs text-slate-400">Next: <span className="font-semibold text-slate-700">{prayer.nextPrayer.name}</span></p>
+                                                <p className="text-sm font-bold text-indigo-600">{prayer.nextPrayer.time} <span className="text-xs text-slate-400">({prayer.nextPrayer.countdown})</span></p>
                                             </div>
-                                        )}
+                                        </div>
+                                    )}
+                                </div>
+                                {prayer.iftarTime && ramadanStats?.isActive && (
+                                    <div className="flex items-center gap-3 mt-3 pt-3 border-t border-slate-200/30">
+                                        <Ico src="/icons/iftar.png" size={28} alt="Iftar" hover />
+                                        <div>
+                                            <p className="text-xs text-slate-400">Buka Puasa</p>
+                                            <p className="text-sm font-bold text-amber-600">{prayer.iftarTime}</p>
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -319,10 +331,10 @@ export default function DashboardPage() {
                                         <p className="text-sm text-slate-500">Sedekah Streak</p>
                                         <div className="flex items-center gap-2">
                                             <p className="text-2xl font-bold text-emerald-600">{sedekahStreak} days</p>
-                                            <Ico src="/icons/fire-streak.png" size={24} alt="streak" />
+                                            <Ico src="/icons/fire-streak.png" size={32} alt="streak" hover />
                                         </div>
                                     </div>
-                                    <Ico src="/icons/sedekah.png" size={40} alt="Sedekah" />
+                                    <Ico src="/icons/sedekah.png" size={48} alt="Sedekah" hover />
                                 </div>
                             </div>
 
@@ -330,30 +342,30 @@ export default function DashboardPage() {
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 animate-fade-up stagger-3">
                                 <button
                                     onClick={() => setShowExpenseForm(true)}
-                                    className="liquid-glass liquid-gradient-indigo p-5 text-center hover:scale-[1.03] transition-transform active:scale-[0.98]"
+                                    className="liquid-glass liquid-gradient-indigo p-5 text-center hover:scale-[1.05] transition-transform active:scale-[0.97] group"
                                 >
-                                    <Ico src="/icons/wallet.png" size={28} alt="Expense" />
+                                    <Ico src="/icons/wallet.png" size={40} alt="Expense" hover />
                                     <span className="text-xs font-medium text-slate-600 block mt-2">Add Expense</span>
                                 </button>
                                 <button
                                     onClick={() => setShowSedekahForm(true)}
-                                    className="liquid-glass liquid-gradient-emerald p-5 text-center hover:scale-[1.03] transition-transform active:scale-[0.98]"
+                                    className="liquid-glass liquid-gradient-emerald p-5 text-center hover:scale-[1.05] transition-transform active:scale-[0.97] group"
                                 >
-                                    <Ico src="/icons/sedekah.png" size={28} alt="Sedekah" />
+                                    <Ico src="/icons/sedekah.png" size={40} alt="Sedekah" hover />
                                     <span className="text-xs font-medium text-slate-600 block mt-2">Give Sedekah</span>
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('zakat')}
-                                    className="liquid-glass liquid-gradient-amber p-5 text-center hover:scale-[1.03] transition-transform active:scale-[0.98]"
+                                    className="liquid-glass liquid-gradient-amber p-5 text-center hover:scale-[1.05] transition-transform active:scale-[0.97] group"
                                 >
-                                    <Ico src="/icons/savings.png" size={28} alt="Zakat" />
+                                    <Ico src="/icons/savings.png" size={40} alt="Zakat" hover />
                                     <span className="text-xs font-medium text-slate-600 block mt-2">Calc Zakat</span>
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('chat')}
-                                    className="liquid-glass liquid-gradient-sky p-5 text-center hover:scale-[1.03] transition-transform active:scale-[0.98]"
+                                    className="liquid-glass liquid-gradient-sky p-5 text-center hover:scale-[1.05] transition-transform active:scale-[0.97] group"
                                 >
-                                    <Ico src="/icons/barakahbot.png" size={28} alt="Chat" />
+                                    <Ico src="/icons/barakahbot.png" size={40} alt="Chat" hover />
                                     <span className="text-xs font-medium text-slate-600 block mt-2">Ask AI</span>
                                 </button>
                             </div>
@@ -448,7 +460,7 @@ export default function DashboardPage() {
                                     <p className="text-xs text-slate-500">Streak</p>
                                     <div className="flex items-center justify-center gap-2">
                                         <p className="text-3xl font-bold text-emerald-600">{sedekahStreak}</p>
-                                        <Ico src="/icons/fire-streak.png" size={28} alt="streak" />
+                                        <Ico src="/icons/fire-streak.png" size={36} alt="streak" hover />
                                     </div>
                                     <p className="text-xs text-slate-400">consecutive days</p>
                                 </div>
@@ -466,7 +478,7 @@ export default function DashboardPage() {
                                     {sedekahRecords.map((rec, i) => (
                                         <div key={rec.id || i} className="flex items-center justify-between py-2.5 border-b border-slate-100/60 last:border-0">
                                             <div className="flex items-center gap-3">
-                                                <Ico src="/icons/sedekah.png" size={20} alt="Sedekah" />
+                                                <Ico src="/icons/sedekah.png" size={28} alt="Sedekah" hover />
                                                 <div>
                                                     <p className="text-sm font-medium text-slate-700">{rec.recipient || 'Sedekah'}</p>
                                                     <p className="text-xs text-slate-400">{rec.date}</p>
@@ -552,7 +564,7 @@ export default function DashboardPage() {
                     {activeTab === 'ramadan' && (
                         <>
                             <div className="flex items-center gap-2">
-                                <Ico src="/icons/crescent-moon.png" size={24} alt="Ramadan" />
+                                <Ico src="/icons/crescent-moon.png" size={32} alt="Ramadan" hover />
                                 <h2 className="text-xl font-bold text-slate-800">Ramadan Mode</h2>
                             </div>
 
@@ -571,7 +583,7 @@ export default function DashboardPage() {
                                     {prayer.iftarTime && (
                                         <div className="liquid-glass liquid-gradient-amber p-5 flex items-center justify-between animate-fade-up stagger-1">
                                             <div className="flex items-center gap-3">
-                                                <Ico src="/icons/iftar.png" size={32} alt="Iftar" />
+                                                <Ico src="/icons/iftar.png" size={40} alt="Iftar" hover />
                                                 <div>
                                                     <p className="text-xs text-slate-500">Buka Puasa</p>
                                                     <p className="text-2xl font-bold text-amber-600">{prayer.iftarTime}</p>
@@ -580,7 +592,7 @@ export default function DashboardPage() {
                                             {prayer.times?.Fajr && (
                                                 <div className="text-right">
                                                     <div className="flex items-center gap-2 justify-end">
-                                                        <Ico src="/icons/sahur.png" size={24} alt="Sahur" />
+                                                        <Ico src="/icons/sahur.png" size={32} alt="Sahur" hover />
                                                         <div>
                                                             <p className="text-xs text-slate-500">Imsak</p>
                                                             <p className="text-lg font-bold text-sky-600">{prayer.times.Fajr}</p>
@@ -593,12 +605,12 @@ export default function DashboardPage() {
 
                                     <div className="grid grid-cols-2 gap-3">
                                         <div className="liquid-glass liquid-gradient-sky p-4 text-center">
-                                            <Ico src="/icons/sahur.png" size={24} alt="Sahur" />
+                                            <Ico src="/icons/sahur.png" size={36} alt="Sahur" hover />
                                             <p className="text-xs text-slate-500 mt-1">Sahur Total</p>
                                             <p className="text-xl font-bold text-sky-600">RM {ramadanStats.sahurTotal.toFixed(2)}</p>
                                         </div>
                                         <div className="liquid-glass liquid-gradient-coral p-4 text-center">
-                                            <Ico src="/icons/iftar.png" size={24} alt="Iftar" />
+                                            <Ico src="/icons/iftar.png" size={36} alt="Iftar" hover />
                                             <p className="text-xs text-slate-500 mt-1">Iftar Total</p>
                                             <p className="text-xl font-bold text-orange-600">RM {ramadanStats.iftarTotal.toFixed(2)}</p>
                                         </div>
@@ -609,7 +621,7 @@ export default function DashboardPage() {
                                             <p className="text-sm text-slate-500">Ramadan Sedekah Streak</p>
                                             <div className="flex items-center gap-2">
                                                 <p className="text-2xl font-bold text-emerald-600">{ramadanStats.sedekahStreak} days</p>
-                                                <Ico src="/icons/fire-streak.png" size={24} alt="streak" />
+                                                <Ico src="/icons/fire-streak.png" size={32} alt="streak" hover />
                                             </div>
                                         </div>
                                         <p className="text-sm text-slate-400">Avg: RM {ramadanStats.dailyAverage.toFixed(2)}/day</p>
@@ -617,7 +629,7 @@ export default function DashboardPage() {
                                 </>
                             ) : (
                                 <div className="liquid-glass p-8 text-center space-y-4">
-                                    <Ico src="/icons/crescent-moon.png" size={48} alt="Ramadan" />
+                                    <Ico src="/icons/crescent-moon.png" size={56} alt="Ramadan" />
                                     <h3 className="text-lg font-semibold text-slate-700">Ramadan Mode Inactive</h3>
                                     <p className="text-sm text-slate-400 max-w-md mx-auto">
                                         Ramadan mode will automatically activate during the holy month. Your sahur, iftar spending, and sedekah streaks will be tracked here.

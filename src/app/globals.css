@@ -169,14 +169,24 @@ html {
 
 
 /* ========================================
-   BASE STYLES
+   BASE STYLES & BACKGROUND
    ======================================== */
+/*
+   TO CHANGE THE BACKGROUND:
+   1. Place your image in the `public/` folder (e.g. `public/bg.jpg`)
+   2. Uncomment the `--custom-bg` line below and set the correct filename
+*/
+:root {
+  /* --custom-bg: url('/bg.jpg'); */
+}
+
 body {
   background-color: #eef1f6 !important;
-  background-image:
-    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 80% 90%, rgba(16, 185, 129, 0.05) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(236, 72, 153, 0.04) 0%, transparent 60%) !important;
+  /* Use custom image if set, otherwise fallback to the default gradient pattern */
+  background-image: var(--custom-bg, radial-gradient(ellipse 80% 60% at 20% 10%, rgba(99, 102, 241, 0.06) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 90%, rgba(16, 185, 129, 0.05) 0%, transparent 60%), radial-gradient(ellipse 50% 40% at 50% 50%, rgba(236, 72, 153, 0.04) 0%, transparent 60%)) !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
   color: #1a1d2e !important;
   font-family: var(--font-sans), 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;

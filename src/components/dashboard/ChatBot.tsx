@@ -79,7 +79,7 @@ export function ChatBot({ isActive, onClose, userAvatar, userName }: ChatBotProp
             {/* Chat Header — mobile only */}
             <div className="md:hidden flex items-center justify-between px-4 py-3 liquid-glass-strong" style={{ borderBottom: '1px solid rgba(148,163,184,0.15)' }}>
                 <div className="flex items-center gap-2">
-                    <Image src="/icons/barakahbot.png" alt="BarakahBot" width={32} height={32} className="rounded-full shrink-0" />
+                    <Image src="/icons/barakahbot.png" alt="BarakahBot" width={32} height={32} className="rounded-full shrink-0 object-cover" />
                     <div>
                         <p className="text-sm font-semibold text-slate-800">BarakahBot</p>
                         <p className="text-[10px] text-emerald-500">Online</p>
@@ -90,7 +90,7 @@ export function ChatBot({ isActive, onClose, userAvatar, userName }: ChatBotProp
 
             {/* Desktop header */}
             <div className="hidden md:flex items-center gap-3 p-5 pb-3">
-                <Image src="/icons/barakahbot.png" alt="BarakahBot" width={40} height={40} className="rounded-full shadow-md shadow-indigo-300/30" />
+                <Image src="/icons/barakahbot.png" alt="BarakahBot" width={40} height={40} className="rounded-full shadow-md shadow-indigo-300/30 object-cover" />
                 <div>
                     <h2 className="text-lg font-bold text-slate-800">BarakahBot</h2>
                     <p className="text-xs text-emerald-500">AI Financial Advisor • Online</p>
@@ -111,7 +111,7 @@ export function ChatBot({ isActive, onClose, userAvatar, userName }: ChatBotProp
                                 </div>
                             )
                         ) : (
-                            <Image src="/icons/barakahbot.png" alt="BarakahBot" width={32} height={32} className="rounded-full shrink-0 shadow-sm" />
+                            <Image src="/icons/barakahbot.png" alt="BarakahBot" width={32} height={32} className="rounded-full shrink-0 shadow-sm object-cover" />
                         )}
 
                         {/* Bubble */}
@@ -129,7 +129,7 @@ export function ChatBot({ isActive, onClose, userAvatar, userName }: ChatBotProp
                 {/* Loading indicator */}
                 {loading && (
                     <div className="flex gap-2.5">
-                        <Image src="/icons/barakahbot.png" alt="BarakahBot" width={32} height={32} className="rounded-full shrink-0" />
+                        <Image src="/icons/barakahbot.png" alt="BarakahBot" width={32} height={32} className="rounded-full shrink-0 object-cover" />
                         <div className="liquid-glass px-4 py-3 rounded-2xl rounded-tl-md">
                             <div className="flex gap-1.5">
                                 <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0s' }} />
