@@ -378,8 +378,8 @@ export default function DashboardPage() {
                                     className="liquid-glass liquid-gradient-sky p-6 text-center hover:scale-[1.03] transition-transform active:scale-[0.98] group flex flex-col items-center justify-center gap-4"
                                     style={{ borderRadius: '1.5rem' }}
                                 >
-                                    <div className="w-16 h-16 rounded-full bg-white/40 flex items-center justify-center shadow-inner group-hover:bg-white/60 transition-colors">
-                                        <Ico src="/icons/barakahbot.png" size={36} alt="Chat" hover />
+                                    <div className="w-16 h-16 rounded-full bg-white/40 flex items-center justify-center shadow-inner group-hover:bg-white/60 transition-colors overflow-hidden">
+                                        <Image src="/icons/barakahbot.png" alt="BarakahBot" width={48} height={48} className="w-full h-full object-cover" />
                                     </div>
                                     <span className="text-sm font-semibold text-slate-700">Ask AI</span>
                                 </button>
