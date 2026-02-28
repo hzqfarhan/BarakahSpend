@@ -177,7 +177,7 @@ html {
    2. Uncomment the `--custom-bg` line below and set the correct filename
 */
 :root {
-  /* --custom-bg: url('/bg.jpg'); */
+  --custom-bg: url('/backgroundbarakah.png');
 }
 
 body {

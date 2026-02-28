@@ -250,7 +250,7 @@ export default function DashboardPage() {
                     {activeTab === 'home' && (
                         <>
                             {/* Date + Prayer Times Bar */}
-                            <div className="liquid-glass p-4 animate-fade-up">
+                            <div className="liquid-glass p-6 animate-fade-up" style={{ borderRadius: '1.5rem' }}>
                                 <div className="flex flex-wrap items-center justify-between gap-3">
                                     <div className="flex items-center gap-4">
                                         <div>
@@ -326,52 +326,67 @@ export default function DashboardPage() {
                                 )}
 
                                 {/* Sedekah Streak */}
-                                <div className="liquid-glass liquid-gradient-emerald p-5 flex items-center justify-between animate-fade-up stagger-2">
-                                    <div>
-                                        <p className="text-sm text-slate-500">Sedekah Streak</p>
-                                        <div className="flex items-center gap-2">
-                                            <p className="text-2xl font-bold text-emerald-600">{sedekahStreak} days</p>
-                                            <Ico src="/icons/fire-streak.png" size={32} alt="streak" hover />
+                                <div className="liquid-glass liquid-gradient-emerald p-6 flex flex-col justify-between animate-fade-up stagger-2" style={{ borderRadius: '1.5rem', minHeight: '140px' }}>
+                                    <div className="flex justify-between items-start">
+                                        <p className="text-sm font-medium text-slate-600">Sedekah Streak</p>
+                                        <div className="w-12 h-12 rounded-2xl bg-white/40 flex items-center justify-center shadow-inner">
+                                            <Ico src="/icons/sedekah.png" size={28} alt="Sedekah" hover />
                                         </div>
                                     </div>
-                                    <Ico src="/icons/sedekah.png" size={48} alt="Sedekah" hover />
+                                    <div className="flex items-center gap-2 mt-4">
+                                        <p className="text-4xl font-black text-emerald-600 tracking-tight">{sedekahStreak}</p>
+                                        <span className="text-sm font-semibold text-emerald-700/70 mt-2">days</span>
+                                        <Ico src="/icons/fire-streak.png" size={32} alt="streak" hover />
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Quick Actions */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 animate-fade-up stagger-3">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-up stagger-3">
                                 <button
                                     onClick={() => setShowExpenseForm(true)}
-                                    className="liquid-glass liquid-gradient-indigo p-5 text-center hover:scale-[1.05] transition-transform active:scale-[0.97] group"
+                                    className="liquid-glass liquid-gradient-indigo p-6 text-center hover:scale-[1.03] transition-transform active:scale-[0.98] group flex flex-col items-center justify-center gap-4"
+                                    style={{ borderRadius: '1.5rem' }}
                                 >
-                                    <Ico src="/icons/wallet.png" size={40} alt="Expense" hover />
-                                    <span className="text-xs font-medium text-slate-600 block mt-2">Add Expense</span>
+                                    <div className="w-16 h-16 rounded-full bg-white/40 flex items-center justify-center shadow-inner group-hover:bg-white/60 transition-colors">
+                                        <Ico src="/icons/wallet.png" size={36} alt="Expense" hover />
+                                    </div>
+                                    <span className="text-sm font-semibold text-slate-700">Add Expense</span>
                                 </button>
                                 <button
                                     onClick={() => setShowSedekahForm(true)}
-                                    className="liquid-glass liquid-gradient-emerald p-5 text-center hover:scale-[1.05] transition-transform active:scale-[0.97] group"
+                                    className="liquid-glass liquid-gradient-emerald p-6 text-center hover:scale-[1.03] transition-transform active:scale-[0.98] group flex flex-col items-center justify-center gap-4"
+                                    style={{ borderRadius: '1.5rem' }}
                                 >
-                                    <Ico src="/icons/sedekah.png" size={40} alt="Sedekah" hover />
-                                    <span className="text-xs font-medium text-slate-600 block mt-2">Give Sedekah</span>
+                                    <div className="w-16 h-16 rounded-full bg-white/40 flex items-center justify-center shadow-inner group-hover:bg-white/60 transition-colors">
+                                        <Ico src="/icons/sedekah.png" size={36} alt="Sedekah" hover />
+                                    </div>
+                                    <span className="text-sm font-semibold text-slate-700">Give Sedekah</span>
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('zakat')}
-                                    className="liquid-glass liquid-gradient-amber p-5 text-center hover:scale-[1.05] transition-transform active:scale-[0.97] group"
+                                    className="liquid-glass liquid-gradient-amber p-6 text-center hover:scale-[1.03] transition-transform active:scale-[0.98] group flex flex-col items-center justify-center gap-4"
+                                    style={{ borderRadius: '1.5rem' }}
                                 >
-                                    <Ico src="/icons/savings.png" size={40} alt="Zakat" hover />
-                                    <span className="text-xs font-medium text-slate-600 block mt-2">Calc Zakat</span>
+                                    <div className="w-16 h-16 rounded-full bg-white/40 flex items-center justify-center shadow-inner group-hover:bg-white/60 transition-colors">
+                                        <Ico src="/icons/savings.png" size={36} alt="Zakat" hover />
+                                    </div>
+                                    <span className="text-sm font-semibold text-slate-700">Calc Zakat</span>
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('chat')}
-                                    className="liquid-glass liquid-gradient-sky p-5 text-center hover:scale-[1.05] transition-transform active:scale-[0.97] group"
+                                    className="liquid-glass liquid-gradient-sky p-6 text-center hover:scale-[1.03] transition-transform active:scale-[0.98] group flex flex-col items-center justify-center gap-4"
+                                    style={{ borderRadius: '1.5rem' }}
                                 >
-                                    <Ico src="/icons/barakahbot.png" size={40} alt="Chat" hover />
-                                    <span className="text-xs font-medium text-slate-600 block mt-2">Ask AI</span>
+                                    <div className="w-16 h-16 rounded-full bg-white/40 flex items-center justify-center shadow-inner group-hover:bg-white/60 transition-colors">
+                                        <Ico src="/icons/barakahbot.png" size={36} alt="Chat" hover />
+                                    </div>
+                                    <span className="text-sm font-semibold text-slate-700">Ask AI</span>
                                 </button>
                             </div>
 
                             {/* Recent Expenses */}
-                            <div className="liquid-glass p-5 animate-fade-up stagger-4">
+                            <div className="liquid-glass p-6 animate-fade-up stagger-4" style={{ borderRadius: '1.5rem' }}>
                                 <h3 className="text-sm font-bold text-slate-700 mb-3">Recent Expenses</h3>
                                 <div className="space-y-1">
                                     {expenses.slice(0, 5).map((exp, i) => {
@@ -410,16 +425,18 @@ export default function DashboardPage() {
                                 <button onClick={() => setShowExpenseForm(true)} className="liquid-btn liquid-btn-primary text-sm px-4 py-2">+ Add</button>
                             </div>
 
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                                 {EXPENSE_CATEGORIES.map(cat => {
                                     const total = expenses.filter(e => e.category === cat.value).reduce((s, e) => s + e.amount, 0);
                                     return (
-                                        <div key={cat.value} className="liquid-glass liquid-gradient-indigo p-4">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <Ico src={cat.icon} size={20} alt={cat.label} />
-                                                <span className="text-xs text-slate-500 truncate">{cat.label}</span>
+                                        <div key={cat.value} className="liquid-glass liquid-gradient-indigo p-5 flex flex-col justify-between hover:-translate-y-1 transition-transform cursor-default" style={{ minHeight: '140px', borderRadius: '1.5rem' }}>
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-12 h-12 rounded-2xl bg-white/50 flex flex-shrink-0 items-center justify-center shadow-inner">
+                                                    <Ico src={cat.icon} size={28} alt={cat.label} />
+                                                </div>
+                                                <span className="text-sm font-semibold text-slate-700 leading-tight line-clamp-2">{cat.label}</span>
                                             </div>
-                                            <p className="text-lg font-bold text-slate-800">RM {total.toFixed(2)}</p>
+                                            <p className="text-2xl font-black text-slate-800 tracking-tight mt-4">RM {total.toFixed(2)}</p>
                                         </div>
                                     );
                                 })}
@@ -455,21 +472,21 @@ export default function DashboardPage() {
                                 <button onClick={() => setShowSedekahForm(true)} className="liquid-btn liquid-btn-emerald text-sm px-4 py-2">+ Give</button>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-3">
-                                <div className="liquid-glass liquid-gradient-emerald p-4 text-center">
-                                    <p className="text-xs text-slate-500">Streak</p>
-                                    <div className="flex items-center justify-center gap-2">
-                                        <p className="text-3xl font-bold text-emerald-600">{sedekahStreak}</p>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="liquid-glass liquid-gradient-emerald p-6 flex flex-col justify-between" style={{ borderRadius: '1.5rem', minHeight: '140px' }}>
+                                    <p className="text-sm font-medium text-slate-600">Streak</p>
+                                    <div className="flex items-center gap-2 mt-2">
+                                        <p className="text-4xl font-black text-emerald-600 tracking-tight">{sedekahStreak}</p>
                                         <Ico src="/icons/fire-streak.png" size={36} alt="streak" hover />
                                     </div>
-                                    <p className="text-xs text-slate-400">consecutive days</p>
+                                    <p className="text-xs font-medium text-slate-500 mt-1">consecutive days</p>
                                 </div>
-                                <div className="liquid-glass liquid-gradient-teal p-4 text-center">
-                                    <p className="text-xs text-slate-500">This Month</p>
-                                    <p className="text-3xl font-bold text-teal-600">
+                                <div className="liquid-glass liquid-gradient-teal p-6 flex flex-col justify-between" style={{ borderRadius: '1.5rem', minHeight: '140px' }}>
+                                    <p className="text-sm font-medium text-slate-600">This Month</p>
+                                    <p className="text-4xl font-black text-teal-600 tracking-tight mt-2">
                                         RM {sedekahRecords.reduce((s, r) => s + r.amount, 0).toFixed(0)}
                                     </p>
-                                    <p className="text-xs text-slate-400">{sedekahRecords.length} records</p>
+                                    <p className="text-xs font-medium text-slate-500 mt-1">{sedekahRecords.length} records</p>
                                 </div>
                             </div>
 
@@ -501,7 +518,7 @@ export default function DashboardPage() {
                             <h2 className="text-xl font-bold text-slate-800">Zakat Calculator</h2>
 
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                                <div className="liquid-glass p-6 space-y-4">
+                                <div className="liquid-glass p-6 space-y-4" style={{ borderRadius: '1.5rem' }}>
                                     <div className="space-y-1.5">
                                         <label className="text-sm font-medium text-slate-600">Total Savings (RM)</label>
                                         <input type="number" step="0.01" placeholder="e.g. 50000" value={zakatSavings} onChange={e => setZakatSavings(e.target.value)} className="w-full h-12 liquid-input" />
@@ -516,7 +533,7 @@ export default function DashboardPage() {
                                 </div>
 
                                 {zakatResult && (
-                                    <div className="liquid-glass liquid-gradient-amber p-6 space-y-4 animate-fade-up">
+                                    <div className="liquid-glass liquid-gradient-amber p-6 space-y-4 animate-fade-up" style={{ borderRadius: '1.5rem' }}>
                                         <div className="text-center">
                                             <p className="text-sm text-slate-500">Zakat Amount (2.5%)</p>
                                             <p className="text-4xl font-extrabold text-amber-600">
@@ -542,7 +559,7 @@ export default function DashboardPage() {
                             </div>
 
                             {zakatHistory.length > 0 && (
-                                <div className="liquid-glass p-5">
+                                <div className="liquid-glass p-6" style={{ borderRadius: '1.5rem' }}>
                                     <h3 className="text-sm font-bold text-slate-700 mb-3">Zakat History</h3>
                                     <div className="space-y-1">
                                         {zakatHistory.map((z, i) => (
@@ -570,7 +587,7 @@ export default function DashboardPage() {
 
                             {ramadanStats?.isActive ? (
                                 <>
-                                    <div className="liquid-glass liquid-gradient-indigo p-6 text-center overflow-hidden animate-fade-up">
+                                    <div className="liquid-glass liquid-gradient-indigo p-6 text-center overflow-hidden animate-fade-up" style={{ borderRadius: '1.5rem' }}>
                                         <p className="text-sm text-slate-500 mb-1">Ramadan Day</p>
                                         <p className="text-5xl font-extrabold text-slate-800 mb-2">{ramadanStats.day}</p>
                                         <p className="text-sm text-indigo-500">of 30</p>
@@ -581,7 +598,7 @@ export default function DashboardPage() {
 
                                     {/* Iftar time card */}
                                     {prayer.iftarTime && (
-                                        <div className="liquid-glass liquid-gradient-amber p-5 flex items-center justify-between animate-fade-up stagger-1">
+                                        <div className="liquid-glass liquid-gradient-amber p-6 flex flex-col md:flex-row md:items-center justify-between animate-fade-up stagger-1 gap-4" style={{ borderRadius: '1.5rem' }}>
                                             <div className="flex items-center gap-3">
                                                 <Ico src="/icons/iftar.png" size={40} alt="Iftar" hover />
                                                 <div>
@@ -603,20 +620,28 @@ export default function DashboardPage() {
                                         </div>
                                     )}
 
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <div className="liquid-glass liquid-gradient-sky p-4 text-center">
-                                            <Ico src="/icons/sahur.png" size={36} alt="Sahur" hover />
-                                            <p className="text-xs text-slate-500 mt-1">Sahur Total</p>
-                                            <p className="text-xl font-bold text-sky-600">RM {ramadanStats.sahurTotal.toFixed(2)}</p>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="liquid-glass liquid-gradient-sky p-6 flex flex-col justify-between" style={{ borderRadius: '1.5rem', minHeight: '140px' }}>
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-12 h-12 rounded-2xl bg-white/40 flex items-center justify-center shadow-inner">
+                                                    <Ico src="/icons/sahur.png" size={28} alt="Sahur" hover />
+                                                </div>
+                                                <p className="text-sm font-medium text-slate-600">Sahur Total</p>
+                                            </div>
+                                            <p className="text-3xl font-black text-sky-600 tracking-tight mt-4">RM {ramadanStats.sahurTotal.toFixed(2)}</p>
                                         </div>
-                                        <div className="liquid-glass liquid-gradient-coral p-4 text-center">
-                                            <Ico src="/icons/iftar.png" size={36} alt="Iftar" hover />
-                                            <p className="text-xs text-slate-500 mt-1">Iftar Total</p>
-                                            <p className="text-xl font-bold text-orange-600">RM {ramadanStats.iftarTotal.toFixed(2)}</p>
+                                        <div className="liquid-glass liquid-gradient-coral p-6 flex flex-col justify-between" style={{ borderRadius: '1.5rem', minHeight: '140px' }}>
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-12 h-12 rounded-2xl bg-white/40 flex items-center justify-center shadow-inner">
+                                                    <Ico src="/icons/iftar.png" size={28} alt="Iftar" hover />
+                                                </div>
+                                                <p className="text-sm font-medium text-slate-600">Iftar Total</p>
+                                            </div>
+                                            <p className="text-3xl font-black text-orange-600 tracking-tight mt-4">RM {ramadanStats.iftarTotal.toFixed(2)}</p>
                                         </div>
                                     </div>
 
-                                    <div className="liquid-glass liquid-gradient-emerald p-5 flex items-center justify-between">
+                                    <div className="liquid-glass liquid-gradient-emerald p-6 flex items-center justify-between mt-4" style={{ borderRadius: '1.5rem' }}>
                                         <div>
                                             <p className="text-sm text-slate-500">Ramadan Sedekah Streak</p>
                                             <div className="flex items-center gap-2">
@@ -628,7 +653,7 @@ export default function DashboardPage() {
                                     </div>
                                 </>
                             ) : (
-                                <div className="liquid-glass p-8 text-center space-y-4">
+                                <div className="liquid-glass p-8 text-center space-y-4" style={{ borderRadius: '1.5rem' }}>
                                     <Ico src="/icons/crescent-moon.png" size={56} alt="Ramadan" />
                                     <h3 className="text-lg font-semibold text-slate-700">Ramadan Mode Inactive</h3>
                                     <p className="text-sm text-slate-400 max-w-md mx-auto">
