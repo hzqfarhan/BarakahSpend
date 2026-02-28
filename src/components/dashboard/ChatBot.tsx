@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { IconChat } from '@/components/icons';
 import Image from 'next/image';
 
 interface ChatMessage {
     role: 'user' | 'assistant';
     content: string;
+    isError?: boolean;
 }
 
 interface ChatBotProps {
@@ -15,6 +15,15 @@ interface ChatBotProps {
     userAvatar: string | null;
     userName: string | null;
 }
+
+const EXAMPLE_PROMPTS = [
+    'Berapa zakat yang perlu saya bayar?',
+    'Can I afford this purchase?',
+    'How much sedekah should I give monthly?',
+    'Apa beza antara zakat dan sedekah?',
+    'Cara nak tambah barakah dalam kewangan',
+    'Tips menabung untuk pelajar',
+];
 
 export function ChatBot({ isActive, onClose, userAvatar, userName }: ChatBotProps) {
     const [messages, setMessages] = useState<ChatMessage[]>([
@@ -25,16 +34,18 @@ export function ChatBot({ isActive, onClose, userAvatar, userName }: ChatBotProp
     ]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
+    const [retryCount, setRetryCount] = useState(0);
     const scrollRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
     }, [messages]);
 
-    const sendMessage = async () => {
-        if (!input.trim() || loading) return;
+    const sendMessage = async (overrideText?: string) => {
+        const messageText = overrideText || input.trim();
+        if (!messageText || loading) return;
 
-        const userMsg: ChatMessage = { role: 'user', content: input.trim() };
+        const userMsg: ChatMessage = { role: 'user', content: messageText };
         const updatedMessages = [...messages, userMsg];
         setMessages(updatedMessages);
         setInput('');
@@ -45,32 +56,44 @@ export function ChatBot({ isActive, onClose, userAvatar, userName }: ChatBotProp
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    messages: updatedMessages.map(m => ({
-                        role: m.role === 'assistant' ? 'model' : 'user',
-                        content: m.content,
-                    })),
+                    messages: updatedMessages
+                        .filter(m => !m.isError)
+                        .map(m => ({
+                            role: m.role === 'assistant' ? 'model' : 'user',
+                            content: m.content,
+                        })),
                 }),
             });
 
             const data = await res.json();
 
-            if (data.message) {
+            if (res.ok && data.message) {
                 setMessages(prev => [...prev, { role: 'assistant', content: data.message }]);
+                setRetryCount(0);
             } else {
+                const errorDetail = data.error || 'Unknown error';
+                console.error('[ChatBot] API error:', errorDetail);
                 setMessages(prev => [...prev, {
                     role: 'assistant',
-                    content: 'Sorry, I couldn\'t process that. Please try again later.',
+                    content: `Maaf, saya tidak dapat memproses permintaan anda sekarang. (${errorDetail})\n\nSila pastikan API key Gemini anda valid dalam fail .env.local`,
+                    isError: true,
                 }]);
+                setRetryCount(prev => prev + 1);
             }
-        } catch {
+        } catch (err) {
+            console.error('[ChatBot] Network error:', err);
             setMessages(prev => [...prev, {
                 role: 'assistant',
-                content: 'I\'m currently offline. Please check your connection and try again.',
+                content: 'Saya sedang offline. Sila semak sambungan internet anda dan cuba lagi.',
+                isError: true,
             }]);
         } finally {
             setLoading(false);
         }
     };
+
+    // Only show example prompts when there's only the greeting message
+    const showExamples = messages.length === 1;
 
     if (!isActive) return null;
 
@@ -84,7 +107,7 @@ export function ChatBot({ isActive, onClose, userAvatar, userName }: ChatBotProp
                     </div>
                     <div>
                         <p className="text-sm font-semibold text-slate-800">BarakahBot</p>
-                        <p className="text-[10px] text-emerald-500">Online</p>
+                        <p className="text-[10px] text-emerald-500">AI Financial Advisor</p>
                     </div>
                 </div>
                 <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-xl">&times;</button>
@@ -97,7 +120,7 @@ export function ChatBot({ isActive, onClose, userAvatar, userName }: ChatBotProp
                 </div>
                 <div>
                     <h2 className="text-lg font-bold text-slate-800">BarakahBot</h2>
-                    <p className="text-xs text-emerald-500">AI Financial Advisor • Online</p>
+                    <p className="text-xs text-emerald-500">AI Financial Advisor</p>
                 </div>
             </div>
 
@@ -122,15 +145,51 @@ export function ChatBot({ isActive, onClose, userAvatar, userName }: ChatBotProp
 
                         {/* Bubble */}
                         <div
-                            className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${msg.role === 'user'
+                            className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-line ${msg.role === 'user'
                                 ? 'bg-gradient-to-br from-indigo-500 to-violet-500 text-white rounded-tr-md shadow-md shadow-indigo-200/30'
-                                : 'liquid-glass text-slate-700 rounded-tl-md'
+                                : msg.isError
+                                    ? 'liquid-glass text-red-600 rounded-tl-md border-red-200/50'
+                                    : 'liquid-glass text-slate-700 rounded-tl-md'
                                 }`}
                         >
                             {msg.content}
                         </div>
                     </div>
                 ))}
+
+                {/* Example Prompts */}
+                {showExamples && !loading && (
+                    <div className="pt-2">
+                        <p className="text-xs text-slate-400 mb-2 font-medium">Cuba tanya:</p>
+                        <div className="flex flex-wrap gap-2">
+                            {EXAMPLE_PROMPTS.map((prompt, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => sendMessage(prompt)}
+                                    className="liquid-glass-subtle px-3 py-1.5 text-xs text-slate-600 hover:text-indigo-600 hover:scale-[1.03] transition-all cursor-pointer"
+                                    style={{ borderRadius: '99px' }}
+                                >
+                                    {prompt}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Retry button for errors */}
+                {retryCount > 0 && !loading && messages[messages.length - 1]?.isError && (
+                    <div className="flex justify-center">
+                        <button
+                            onClick={() => {
+                                const lastUserMsg = [...messages].reverse().find(m => m.role === 'user');
+                                if (lastUserMsg) sendMessage(lastUserMsg.content);
+                            }}
+                            className="liquid-btn-glass px-4 py-2 text-xs text-slate-600 hover:text-indigo-600 rounded-full"
+                        >
+                            Cuba lagi / Try again
+                        </button>
+                    </div>
+                )}
 
                 {/* Loading indicator */}
                 {loading && (
@@ -156,12 +215,12 @@ export function ChatBot({ isActive, onClose, userAvatar, userName }: ChatBotProp
                         value={input}
                         onChange={e => setInput(e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
-                        placeholder="Ask about zakat, budgeting, halal investing..."
+                        placeholder="Tanya tentang zakat, kewangan, pelaburan halal..."
                         className="flex-1 h-12 liquid-input text-sm"
                         disabled={loading}
                     />
                     <button
-                        onClick={sendMessage}
+                        onClick={() => sendMessage()}
                         disabled={loading || !input.trim()}
                         className="liquid-btn liquid-btn-primary h-12 px-5 disabled:opacity-40"
                     >

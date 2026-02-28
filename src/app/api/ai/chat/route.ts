@@ -63,19 +63,36 @@ export async function POST(request: Request) {
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error('[Chat API] Gemini error:', errorText);
+            console.error('[Chat API] Gemini error:', response.status, errorText);
+
+            if (response.status === 403 || response.status === 401) {
+                return NextResponse.json(
+                    { error: 'API key tidak sah. Sila kemaskini GEMINI_API_KEY dalam .env.local' },
+                    { status: 500 }
+                );
+            }
+            if (response.status === 429) {
+                return NextResponse.json(
+                    { error: 'API rate limit. Sila cuba lagi dalam beberapa saat.' },
+                    { status: 429 }
+                );
+            }
             return NextResponse.json(
-                { error: 'Failed to get response from AI' },
+                { error: `Gemini API error (${response.status})` },
                 { status: 500 }
             );
         }
 
         const result = await response.json();
         const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+        const finishReason = result.candidates?.[0]?.finishReason;
 
         if (!text) {
+            const reason = finishReason === 'SAFETY'
+                ? 'Respons disekat oleh safety filter. Cuba soalan lain.'
+                : 'AI tidak memberikan respons. Cuba lagi.';
             return NextResponse.json(
-                { error: 'Empty response from AI' },
+                { error: reason },
                 { status: 500 }
             );
         }
