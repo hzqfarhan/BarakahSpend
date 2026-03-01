@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import {
     IconHome, IconExpenses, IconSedekah, IconZakat,
-    IconRamadan, IconChat, IconSignOut, IconCollapse, IconMasjid,
+    IconRamadan, IconChat, IconSignOut, IconCollapse,
 } from '@/components/icons';
 
-export type NavTab = 'home' | 'expenses' | 'sedekah' | 'zakat' | 'ramadan' | 'masjid' | 'chat';
+export type NavTab = 'home' | 'expenses' | 'sedekah' | 'zakat' | 'ramadan' | 'chat';
 
 const NAV_ITEMS: { key: NavTab; label: string; Icon: React.FC<{ size?: number; className?: string }> }[] = [
     { key: 'home', label: 'Home', Icon: IconHome },
@@ -15,7 +15,6 @@ const NAV_ITEMS: { key: NavTab; label: string; Icon: React.FC<{ size?: number; c
     { key: 'sedekah', label: 'Sedekah', Icon: IconSedekah },
     { key: 'zakat', label: 'Zakat', Icon: IconZakat },
     { key: 'ramadan', label: 'Ramadan', Icon: IconRamadan },
-    { key: 'masjid', label: 'Masjid', Icon: IconMasjid },
     { key: 'chat', label: 'AI Chat', Icon: IconChat },
 ];
 

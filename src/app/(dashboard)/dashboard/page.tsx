@@ -27,7 +27,6 @@ import { Sidebar, BottomNav, type NavTab } from '@/components/dashboard/Sidebar'
 import { ChatBot } from '@/components/dashboard/ChatBot';
 import { MusicPlayer } from '@/components/dashboard/MusicPlayer';
 import { PrivacyNotice, OfflineDataBanner } from '@/components/dashboard/PrivacyNotice';
-import { MasjidAdminPanel } from '@/components/dashboard/MasjidAdminPanel';
 
 // ========================
 // Icon helper — renders generated images instead of emoji
@@ -666,11 +665,6 @@ export default function DashboardPage() {
                                 </div>
                             )}
                         </>
-                    )}
-
-                    {/* ============================== MASJID TAB ============================== */}
-                    {activeTab === 'masjid' && (
-                        <MasjidAdminPanel userId={userId} />
                     )}
 
                     {/* ============================== CHAT TAB ============================== */}
