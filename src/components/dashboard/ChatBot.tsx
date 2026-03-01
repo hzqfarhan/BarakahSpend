@@ -53,6 +53,31 @@ export function ChatBot({ isActive, onClose, userAvatar, userName, financialCont
         scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
     }, [messages]);
 
+    const getFixedResponse = (query: string) => {
+        const q = query.trim().toLowerCase();
+
+        if (q.includes('berapa zakat')) {
+            return "Zakat pendapatan diwajibkan jika pendapatan anda melepasi nisab (anggaran RM24,000+ setahun). Anda boleh guna kalkulator Zakat di tab Zakat untuk kira dengan tepat!";
+        }
+        if (q.includes('afford this purchase')) {
+            return "This depends on your disposable income and savings. The 50/30/20 rule suggests 50% for needs, 30% for wants, and 20% savings. Make sure you don't use your emergency fund or go into debt for a 'want'.";
+        }
+        if (q.includes('how much sedekah')) {
+            return "There's no minimum for sedekah! Even RM1 consistently is beloved by Allah. 'The most beloved of deeds to Allah are those that are most consistent, even if it is small.' (Bukhari)";
+        }
+        if (q.includes('beza antara zakat dan sedekah')) {
+            return "Zakat adalah rukun Islam yang diwajibkan (2.5%) ke atas harta yang cukup syarat (nisab & haul). Sedekah pula adalah pemberian sunat pada bila-bila masa mengikut kemampuan.";
+        }
+        if (q.includes('tambah barakah')) {
+            return "Untuk tambah barakah:\n1. Pastikan sumber rezeki halal.\n2. Bayar zakat bila wajib.\n3. Rajinkan bersedekah (terutamanya lepas Subuh).\n4. Jauhi riba (hutang faedah tinggi).\n5. Berbakti pada ibu bapa.";
+        }
+        if (q.includes('tips menabung')) {
+            return "1. Asingkan duit simpanan SEBELUM berbelanja.\n2. Bawa bekal makanan.\n3. Guna diskaun pelajar (KTM, Apple dll).\n4. Cuba puasa sunat Isnin & Khamis untuk jimat dan dapat pahala!";
+        }
+
+        return "Saya masih belajar. Sila klik butang soalan yang dicadangkan di atas!";
+    };
+
     const sendMessage = async (overrideText?: string) => {
         const messageText = overrideText || input.trim();
         if (!messageText || loading) return;
@@ -63,46 +88,12 @@ export function ChatBot({ isActive, onClose, userAvatar, userName, financialCont
         setInput('');
         setLoading(true);
 
-        try {
-            const res = await fetch('/api/ai/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    messages: updatedMessages
-                        .filter(m => !m.isError)
-                        .map(m => ({
-                            role: m.role === 'assistant' ? 'model' : 'user',
-                            content: m.content,
-                        })),
-                    financialContext: financialContext || null,
-                }),
-            });
-
-            const data = await res.json();
-
-            if (res.ok && data.message) {
-                setMessages(prev => [...prev, { role: 'assistant', content: data.message }]);
-                setRetryCount(0);
-            } else {
-                const errorDetail = data.error || 'Unknown error';
-                console.error('[ChatBot] API error:', errorDetail);
-                setMessages(prev => [...prev, {
-                    role: 'assistant',
-                    content: `Maaf, saya tidak dapat memproses permintaan anda sekarang. (${errorDetail})\n\nSila pastikan API key Gemini anda valid dalam fail .env.local`,
-                    isError: true,
-                }]);
-                setRetryCount(prev => prev + 1);
-            }
-        } catch (err) {
-            console.error('[ChatBot] Network error:', err);
-            setMessages(prev => [...prev, {
-                role: 'assistant',
-                content: 'Saya sedang offline. Sila semak sambungan internet anda dan cuba lagi.',
-                isError: true,
-            }]);
-        } finally {
+        // Simulate network delay for natural feel
+        setTimeout(() => {
+            const responseText = getFixedResponse(messageText);
+            setMessages(prev => [...prev, { role: 'assistant', content: responseText }]);
             setLoading(false);
-        }
+        }, 600);
     };
 
     // Only show example prompts when there's only the greeting message
