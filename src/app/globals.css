@@ -105,15 +105,15 @@
   --sidebar-ring: #6366f1;
 
   /* Liquid Glass tokens — amplified for visible frosted effect */
-  --glass-bg: rgba(255, 255, 255, 0.25);
-  --glass-bg-strong: rgba(255, 255, 255, 0.45);
-  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-bg: rgba(255, 255, 255, 0.42);
+  --glass-bg-strong: rgba(255, 255, 255, 0.62);
+  --glass-border: rgba(255, 255, 255, 0.65);
   --glass-border-outer: rgba(148, 163, 184, 0.25);
-  --glass-shadow: 0 10px 40px rgba(31, 38, 80, 0.15), 0 4px 12px rgba(31, 38, 80, 0.08);
-  --glass-shadow-lg: 0 24px 80px rgba(31, 38, 80, 0.2), 0 6px 20px rgba(31, 38, 80, 0.12);
-  --glass-highlight: inset 0 1px 2px rgba(255, 255, 255, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
-  --glass-blur: 48px;
-  --glass-blur-strong: 64px;
+  --glass-shadow: 0 8px 32px rgba(31, 38, 80, 0.10), 0 2px 8px rgba(31, 38, 80, 0.06);
+  --glass-shadow-lg: 0 20px 60px rgba(31, 38, 80, 0.14), 0 4px 16px rgba(31, 38, 80, 0.08);
+  --glass-highlight: inset 0 1px 2px rgba(255, 255, 255, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+  --glass-blur: 32px;
+  --glass-blur-strong: 56px;
 }
 
 /* Override dark mode — force light always */
@@ -192,35 +192,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
-}
-
-/* Bokeh effect layers */
-body::before,
-body::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: -1;
-}
-
-body::before {
-  background:
-    radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.15) 0%, transparent 45%);
-  animation: float-slow 12s ease-in-out infinite alternate;
-  filter: blur(60px);
-}
-
-body::after {
-  background:
-    radial-gradient(circle at 50% 80%, rgba(236, 72, 153, 0.12) 0%, transparent 40%),
-    radial-gradient(circle at 80% 80%, rgba(56, 189, 248, 0.15) 0%, transparent 45%);
-  animation: float-slow 15s ease-in-out infinite alternate-reverse;
-  filter: blur(60px);
 }
 
 /* ========================================
