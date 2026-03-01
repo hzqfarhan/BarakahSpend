@@ -43,6 +43,25 @@ function Ico({ src, size = 28, alt = '', hover = false }: { src: string; size?: 
     );
 }
 
+// ========================
+// Reusable Modal Component
+// ========================
+function Modal({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
+    if (!open) return null;
+    return (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center px-4">
+            <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={onClose} />
+            <div className="relative w-full max-w-sm liquid-glass p-6 animate-fade-up">
+                <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-bold text-slate-800">{title}</h3>
+                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+                </div>
+                {children}
+            </div>
+        </div>
+    );
+}
+
 export default function DashboardPage() {
     const { userId, userName, userEmail, userAvatar, signOut, loading: authLoading, isAuthenticated } = useAuth();
     const isOnline = useOnlineStatus();
@@ -177,22 +196,7 @@ export default function DashboardPage() {
         );
     }
 
-    // Inline Modal
-    const Modal = ({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) => {
-        if (!open) return null;
-        return (
-            <div className="fixed inset-0 z-[60] flex items-center justify-center px-4">
-                <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={onClose} />
-                <div className="relative w-full max-w-sm liquid-glass p-6 animate-fade-up">
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-bold text-slate-800">{title}</h3>
-                        <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
-                    </div>
-                    {children}
-                </div>
-            </div>
-        );
-    };
+
 
     const tierColors = {
         excellent: { bg: 'bg-emerald-100/60', text: 'text-emerald-700', border: 'border-emerald-200/50' },
