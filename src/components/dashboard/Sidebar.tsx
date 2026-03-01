@@ -99,15 +99,15 @@ export function Sidebar({
                     <button
                         key={item.key}
                         onClick={() => onTabChange(item.key)}
-                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[1.25rem] transition-all duration-300 group ${activeTab === item.key
-                            ? 'bg-gradient-to-r from-indigo-500 to-fuchsia-500 text-white shadow-lg shadow-indigo-500/30 font-semibold'
-                            : 'text-white/70 hover:bg-white/10 hover:text-white'
+                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${activeTab === item.key
+                            ? 'bg-indigo-50/70 text-indigo-600 shadow-sm shadow-indigo-100/50'
+                            : 'text-slate-500 hover:bg-slate-100/50 hover:text-slate-700'
                             } ${collapsed ? 'justify-center' : ''}`}
                         title={collapsed ? item.label : undefined}
                     >
                         <item.Icon size={20} className="shrink-0" />
                         {!collapsed && (
-                            <span className="text-sm">{item.label}</span>
+                            <span className="text-sm font-medium">{item.label}</span>
                         )}
                     </button>
                 ))}
@@ -118,15 +118,15 @@ export function Sidebar({
                 <div className="h-px bg-slate-200/40 mx-1 mb-2" />
                 <button
                     onClick={onSignOut}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[1.25rem] text-rose-300 hover:text-white hover:bg-rose-500/80 transition-all ${collapsed ? 'justify-center' : ''}`}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50/50 transition-all ${collapsed ? 'justify-center' : ''}`}
                     title={collapsed ? 'Sign Out' : undefined}
                 >
                     <IconSignOut size={20} className="shrink-0" />
-                    {!collapsed && <span className="text-sm font-semibold">Sign Out</span>}
+                    {!collapsed && <span className="text-sm font-medium">Sign Out</span>}
                 </button>
                 <button
                     onClick={toggle}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[1.25rem] text-white/50 hover:text-white hover:bg-white/10 transition-all ${collapsed ? 'justify-center' : ''}`}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100/50 transition-all ${collapsed ? 'justify-center' : ''}`}
                     title={collapsed ? 'Expand' : 'Collapse'}
                 >
                     <IconCollapse size={20} className={`shrink-0 transition-transform ${collapsed ? '' : 'rotate-90'}`} />
@@ -140,19 +140,19 @@ export function Sidebar({
 /* =================== BOTTOM NAV (Mobile) =================== */
 export function BottomNav({ activeTab, onTabChange }: { activeTab: NavTab; onTabChange: (tab: NavTab) => void }) {
     return (
-        <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden liquid-glass-strong border-t border-white/20" style={{ borderRadius: '1.5rem 1.5rem 0 0' }}>
+        <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden liquid-glass-strong" style={{ borderRadius: '1.25rem 1.25rem 0 0' }}>
             <div className="flex justify-around items-center py-2 pb-[max(env(safe-area-inset-bottom),0.5rem)]">
                 {NAV_ITEMS.map(item => (
                     <button
                         key={item.key}
                         onClick={() => onTabChange(item.key)}
-                        className={`flex flex-col items-center gap-1 px-3 py-2 rounded-[1.25rem] transition-all duration-300 ${activeTab === item.key
-                            ? 'text-white bg-gradient-to-tr from-indigo-500 to-fuchsia-500 scale-105 shadow-md shadow-fuchsia-500/20'
-                            : 'text-slate-500 hover:text-slate-700'
+                        className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-200 ${activeTab === item.key
+                            ? 'text-indigo-600 bg-indigo-50/60 scale-105'
+                            : 'text-slate-400 hover:text-slate-600'
                             }`}
                     >
                         <item.Icon size={20} />
-                        <span className="text-[10px] font-semibold">{item.label}</span>
+                        <span className="text-[10px] font-medium">{item.label}</span>
                     </button>
                 ))}
             </div>
