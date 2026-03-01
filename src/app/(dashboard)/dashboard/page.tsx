@@ -672,12 +672,12 @@ export default function DashboardPage() {
             <div className="fixed bottom-24 right-4 md:bottom-8 md:right-8 z-50">
                 <button
                     onClick={() => setShowChat(true)}
-                    className="group relative w-16 h-16 md:w-20 md:h-20 rounded-[1.5rem] bg-indigo-600 shadow-[0_12px_40px_rgba(99,102,241,0.4)] flex items-center justify-center hover:-translate-y-2 transition-all duration-300 border-2 border-white/20 overflow-hidden"
+                    className="group relative w-14 h-14 md:w-16 md:h-16 rounded-[1.25rem] liquid-glass-strong flex items-center justify-center hover:-translate-y-2 transition-all duration-300 border border-white/50 overflow-visible shadow-[0_8px_32px_rgba(99,102,241,0.25)] p-0 m-0"
                 >
-                    <Image src="/icons/barakahbot.png" alt="BarakahBot" width={64} height={64} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    <Image src="/icons/barakahbot.png" alt="BarakahBot" width={48} height={48} className="w-[85%] h-[85%] object-contain group-hover:scale-110 transition-transform duration-500 rounded-xl" />
 
                     {/* Notify dot */}
-                    <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 border-2 border-white rounded-full animate-pulse" />
+                    <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 border-2 border-white rounded-full animate-pulse shadow-sm" />
                 </button>
             </div>
 
