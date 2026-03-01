@@ -104,16 +104,16 @@
   --sidebar-border: rgba(148, 163, 184, 0.2);
   --sidebar-ring: #6366f1;
 
-  /* Liquid Glass tokens — amplified for visible frosted effect */
-  --glass-bg: rgba(255, 255, 255, 0.25);
-  --glass-bg-strong: rgba(255, 255, 255, 0.45);
-  --glass-border: rgba(255, 255, 255, 0.5);
-  --glass-border-outer: rgba(148, 163, 184, 0.25);
-  --glass-shadow: 0 10px 40px rgba(31, 38, 80, 0.15), 0 4px 12px rgba(31, 38, 80, 0.08);
-  --glass-shadow-lg: 0 24px 80px rgba(31, 38, 80, 0.2), 0 6px 20px rgba(31, 38, 80, 0.12);
-  --glass-highlight: inset 0 1px 2px rgba(255, 255, 255, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
-  --glass-blur: 48px;
-  --glass-blur-strong: 64px;
+  /* Liquid Glass tokens — tuned for structural light mode (gaming layout ref) */
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-bg-strong: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.8);
+  --glass-border-outer: rgba(148, 163, 184, 0.15);
+  --glass-shadow: 0 12px 32px rgba(31, 38, 80, 0.08), 0 4px 12px rgba(31, 38, 80, 0.03);
+  --glass-shadow-lg: 0 32px 64px rgba(31, 38, 80, 0.12), 0 8px 24px rgba(31, 38, 80, 0.06);
+  --glass-highlight: inset 0 2px 4px rgba(255, 255, 255, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+  --glass-blur: 32px;
+  --glass-blur-strong: 48px;
 }
 
 /* Override dark mode — force light always */
@@ -233,20 +233,19 @@ body::after {
   backdrop-filter: blur(var(--glass-blur)) saturate(1.5);
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.5);
   border: 1px solid var(--glass-border);
-  border-radius: 1.25rem;
+  border-radius: 1.5rem;
+  /* structurally rounded edges like ref */
   box-shadow:
     var(--glass-shadow),
-    var(--glass-highlight),
-    inset 0 -1px 3px rgba(0, 0, 0, 0.05);
+    var(--glass-highlight);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .liquid-glass:hover {
   box-shadow:
     var(--glass-shadow-lg),
-    var(--glass-highlight),
-    inset 0 -1px 3px rgba(0, 0, 0, 0.05);
-  transform: translateY(-1px);
+    var(--glass-highlight);
+  transform: translateY(-2px);
 }
 
 /* Strong glass — more opaque, for status bars & navs */
@@ -255,7 +254,7 @@ body::after {
   backdrop-filter: blur(var(--glass-blur-strong)) saturate(1.6);
   -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(1.6);
   border: 1px solid var(--glass-border);
-  border-radius: 1.25rem;
+  border-radius: 1.5rem;
   box-shadow:
     var(--glass-shadow),
     var(--glass-highlight);
@@ -278,39 +277,50 @@ body::after {
   -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(1.5);
   border-right: 1px solid var(--glass-border);
   box-shadow:
-    4px 0 32px rgba(31, 38, 80, 0.06),
-    var(--glass-highlight);
+    10px 0 40px rgba(31, 38, 80, 0.05),
+    inset -1px 0 0 rgba(255, 255, 255, 0.5);
+  /* subtle inner edge */
 }
 
 /* ========================================
    GRADIENT GLASS SURFACES (Colored)
    ======================================== */
+/* ========================================
+   GRADIENT GLASS SURFACES (Colored - Light vibrant structure)
+   ======================================== */
 .liquid-gradient-indigo {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.15));
+  background: linear-gradient(135deg, rgba(238, 242, 255, 0.9), rgba(224, 231, 255, 0.6));
+  border: 1px solid rgba(199, 210, 254, 0.5);
 }
 
 .liquid-gradient-emerald {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(52, 211, 153, 0.15));
+  background: linear-gradient(135deg, rgba(209, 250, 229, 0.9), rgba(167, 243, 208, 0.6));
+  border: 1px solid rgba(110, 231, 183, 0.5);
 }
 
 .liquid-gradient-amber {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(251, 191, 36, 0.15));
+  background: linear-gradient(135deg, rgba(254, 243, 199, 0.9), rgba(253, 230, 138, 0.6));
+  border: 1px solid rgba(252, 211, 77, 0.5);
 }
 
 .liquid-gradient-rose {
-  background: linear-gradient(135deg, rgba(244, 63, 94, 0.2), rgba(251, 113, 133, 0.15));
+  background: linear-gradient(135deg, rgba(255, 228, 230, 0.9), rgba(254, 205, 211, 0.6));
+  border: 1px solid rgba(253, 164, 175, 0.5);
 }
 
 .liquid-gradient-sky {
-  background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(56, 189, 248, 0.15));
+  background: linear-gradient(135deg, rgba(224, 242, 254, 0.9), rgba(186, 230, 253, 0.6));
+  border: 1px solid rgba(125, 211, 252, 0.5);
 }
 
 .liquid-gradient-teal {
-  background: linear-gradient(135deg, rgba(20, 184, 166, 0.18), rgba(94, 234, 212, 0.12));
+  background: linear-gradient(135deg, rgba(204, 251, 241, 0.9), rgba(153, 246, 228, 0.6));
+  border: 1px solid rgba(94, 234, 212, 0.5);
 }
 
 .liquid-gradient-coral {
-  background: linear-gradient(135deg, rgba(251, 146, 60, 0.18), rgba(248, 113, 113, 0.14));
+  background: linear-gradient(135deg, rgba(255, 237, 213, 0.9), rgba(254, 215, 170, 0.6));
+  border: 1px solid rgba(253, 186, 116, 0.5);
 }
 
 /* ========================================

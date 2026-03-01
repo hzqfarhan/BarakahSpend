@@ -50,10 +50,10 @@ function Modal({ open, onClose, title, children }: { open: boolean; onClose: () 
     if (!open) return null;
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center px-4">
-            <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={onClose} />
-            <div className="relative w-full max-w-sm liquid-glass p-6 animate-fade-up">
+            <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm" onClick={onClose} />
+            <div className="relative w-full max-w-sm liquid-glass-strong p-6 animate-fade-up">
                 <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-bold text-slate-800">{title}</h3>
+                    <h3 className="text-lg font-bold text-slate-800 tracking-tight">{title}</h3>
                     <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
                 </div>
                 {children}
@@ -82,6 +82,9 @@ export default function DashboardPage() {
     const [expenseCategory, setExpenseCategory] = useState<ExpenseCategory>('makanan_halal');
     const [expenseDesc, setExpenseDesc] = useState('');
     const [showExpenseForm, setShowExpenseForm] = useState(false);
+
+    // ChatBot floating state
+    const [showChat, setShowChat] = useState(false);
 
     // Sedekah form
     const [sedekahAmount, setSedekahAmount] = useState('');
@@ -372,23 +375,13 @@ export default function DashboardPage() {
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('zakat')}
-                                    className="liquid-glass liquid-gradient-amber p-6 text-center hover:scale-[1.03] transition-transform active:scale-[0.98] group flex flex-col items-center justify-center gap-4"
+                                    className="liquid-glass liquid-gradient-amber p-6 text-center hover:-translate-y-1 transition-transform group flex flex-col items-center justify-center gap-4"
                                     style={{ borderRadius: '1.5rem' }}
                                 >
-                                    <div className="w-20 h-20 rounded-full bg-white/40 flex items-center justify-center shadow-inner group-hover:bg-white/60 transition-colors">
-                                        <Ico src="/icons/savings.png" size={56} alt="Zakat" hover />
+                                    <div className="w-20 h-20 rounded-[1.25rem] bg-white/50 flex items-center justify-center shadow-[inset_0_2px_10px_rgba(255,255,255,0.8)] group-hover:bg-white/70 transition-colors">
+                                        <Ico src="/icons/savings.png" size={48} alt="Zakat" hover />
                                     </div>
-                                    <span className="text-sm font-semibold text-slate-700">Calc Zakat</span>
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('chat')}
-                                    className="liquid-glass liquid-gradient-sky p-6 text-center hover:scale-[1.03] transition-transform active:scale-[0.98] group flex flex-col items-center justify-center gap-4"
-                                    style={{ borderRadius: '1.5rem' }}
-                                >
-                                    <div className="w-20 h-20 rounded-full bg-white/40 flex items-center justify-center shadow-inner group-hover:bg-white/60 transition-colors overflow-hidden">
-                                        <Image src="/icons/barakahbot.png" alt="BarakahBot" width={64} height={64} className="w-full h-full object-cover" />
-                                    </div>
-                                    <span className="text-sm font-semibold text-slate-700">Ask AI</span>
+                                    <span className="text-sm font-bold text-slate-700 tracking-wide">Calc Zakat</span>
                                 </button>
                             </div>
 
@@ -671,12 +664,32 @@ export default function DashboardPage() {
                         </>
                     )}
 
-                    {/* ============================== CHAT TAB ============================== */}
-                    {activeTab === 'chat' && (
-                        <div className="liquid-glass overflow-hidden animate-fade-up" style={{ height: 'calc(100vh - 10rem)' }}>
+                    {/* Chat Tab removed, handled by FAB */}
+                </div>
+            </div>
+
+            {/* FLOATING ACTION BUTTON (BarakahBot) */}
+            <div className="fixed bottom-24 right-4 md:bottom-8 md:right-8 z-50">
+                <button
+                    onClick={() => setShowChat(true)}
+                    className="group relative w-16 h-16 md:w-20 md:h-20 rounded-[1.5rem] bg-indigo-600 shadow-[0_12px_40px_rgba(99,102,241,0.4)] flex items-center justify-center hover:-translate-y-2 transition-all duration-300 border-2 border-white/20 overflow-hidden"
+                >
+                    <Image src="/icons/barakahbot.png" alt="BarakahBot" width={64} height={64} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+
+                    {/* Notify dot */}
+                    <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 border-2 border-white rounded-full animate-pulse" />
+                </button>
+            </div>
+
+            {/* ChatBot Modal/Slide-out */}
+            {
+                showChat && (
+                    <div className="fixed inset-0 z-[70] flex justify-end md:p-6 pb-0">
+                        <div className="absolute inset-0 bg-slate-900/10 backdrop-blur-sm" onClick={() => setShowChat(false)} />
+                        <div className="relative w-full md:w-[420px] h-[calc(100vh-80px)] md:h-full bg-white md:rounded-[2rem] rounded-t-[2rem] shadow-[0_-10px_60px_rgba(0,0,0,0.1)] flex flex-col animate-fade-up overflow-hidden border border-slate-200" style={typeof window !== 'undefined' && window.innerWidth < 768 ? { marginTop: 'auto', maxHeight: '90vh' } : {}}>
                             <ChatBot
                                 isActive={true}
-                                onClose={() => setActiveTab('home')}
+                                onClose={() => setShowChat(false)}
                                 userAvatar={userAvatar}
                                 userName={userName}
                                 financialContext={{
@@ -691,9 +704,9 @@ export default function DashboardPage() {
                                 }}
                             />
                         </div>
-                    )}
-                </div>
-            </div>
+                    </div>
+                )
+            }
 
             {/* BOTTOM NAV (Mobile) */}
             <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
@@ -734,6 +747,6 @@ export default function DashboardPage() {
                     <button onClick={handleAddSedekah} className="w-full liquid-btn liquid-btn-emerald h-12 text-base">Record Sedekah</button>
                 </div>
             </Modal>
-        </div>
+        </div >
     );
 }
