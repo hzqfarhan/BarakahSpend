@@ -31,7 +31,7 @@ import { PrivacyNotice, OfflineDataBanner } from '@/components/dashboard/Privacy
 // ========================
 // Icon helper — renders generated images instead of emoji
 // ========================
-function Ico({ src, size = 28, alt = '', hover = false }: { src: string; size?: number; alt?: string; hover?: boolean }) {
+function Ico({ src, size = 40, alt = '', hover = false }: { src: string; size?: number; alt?: string; hover?: boolean }) {
     return (
         <Image
             src={src}
@@ -229,9 +229,9 @@ export default function DashboardPage() {
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             {userAvatar ? (
-                                <Image src={userAvatar} alt={userName || ''} width={36} height={36} className="rounded-full ring-2 ring-indigo-200/50" />
+                                <Image src={userAvatar} alt={userName || ''} width={48} height={48} className="rounded-full ring-2 ring-indigo-200/50" />
                             ) : (
-                                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center text-white text-sm font-bold shadow-md shadow-indigo-300/30">
+                                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center text-white text-lg font-bold shadow-md shadow-indigo-300/30">
                                     {userName?.[0] || userEmail?.[0] || '?'}
                                 </div>
                             )}
@@ -245,7 +245,7 @@ export default function DashboardPage() {
                         </div>
                         <div className="flex items-center gap-2">
                             <MusicPlayer />
-                            <Image src="/logo.png" alt="BarakahSpend" width={32} height={32} className="rounded-xl" />
+                            <Image src="/logo.png" alt="BarakahSpend" width={48} height={48} className="rounded-xl" />
                         </div>
                     </div>
                 </div>
@@ -355,8 +355,8 @@ export default function DashboardPage() {
                                     className="liquid-glass liquid-gradient-indigo p-6 text-center hover:scale-[1.03] transition-transform active:scale-[0.98] group flex flex-col items-center justify-center gap-4"
                                     style={{ borderRadius: '1.5rem' }}
                                 >
-                                    <div className="w-16 h-16 rounded-full bg-white/40 flex items-center justify-center shadow-inner group-hover:bg-white/60 transition-colors">
-                                        <Ico src="/icons/wallet.png" size={36} alt="Expense" hover />
+                                    <div className="w-20 h-20 rounded-full bg-white/40 flex items-center justify-center shadow-inner group-hover:bg-white/60 transition-colors">
+                                        <Ico src="/icons/wallet.png" size={56} alt="Expense" hover />
                                     </div>
                                     <span className="text-sm font-semibold text-slate-700">Add Expense</span>
                                 </button>
@@ -365,8 +365,8 @@ export default function DashboardPage() {
                                     className="liquid-glass liquid-gradient-emerald p-6 text-center hover:scale-[1.03] transition-transform active:scale-[0.98] group flex flex-col items-center justify-center gap-4"
                                     style={{ borderRadius: '1.5rem' }}
                                 >
-                                    <div className="w-16 h-16 rounded-full bg-white/40 flex items-center justify-center shadow-inner group-hover:bg-white/60 transition-colors">
-                                        <Ico src="/icons/sedekah.png" size={36} alt="Sedekah" hover />
+                                    <div className="w-20 h-20 rounded-full bg-white/40 flex items-center justify-center shadow-inner group-hover:bg-white/60 transition-colors">
+                                        <Ico src="/icons/sedekah.png" size={56} alt="Sedekah" hover />
                                     </div>
                                     <span className="text-sm font-semibold text-slate-700">Give Sedekah</span>
                                 </button>
@@ -375,8 +375,8 @@ export default function DashboardPage() {
                                     className="liquid-glass liquid-gradient-amber p-6 text-center hover:scale-[1.03] transition-transform active:scale-[0.98] group flex flex-col items-center justify-center gap-4"
                                     style={{ borderRadius: '1.5rem' }}
                                 >
-                                    <div className="w-16 h-16 rounded-full bg-white/40 flex items-center justify-center shadow-inner group-hover:bg-white/60 transition-colors">
-                                        <Ico src="/icons/savings.png" size={36} alt="Zakat" hover />
+                                    <div className="w-20 h-20 rounded-full bg-white/40 flex items-center justify-center shadow-inner group-hover:bg-white/60 transition-colors">
+                                        <Ico src="/icons/savings.png" size={56} alt="Zakat" hover />
                                     </div>
                                     <span className="text-sm font-semibold text-slate-700">Calc Zakat</span>
                                 </button>
@@ -385,8 +385,8 @@ export default function DashboardPage() {
                                     className="liquid-glass liquid-gradient-sky p-6 text-center hover:scale-[1.03] transition-transform active:scale-[0.98] group flex flex-col items-center justify-center gap-4"
                                     style={{ borderRadius: '1.5rem' }}
                                 >
-                                    <div className="w-16 h-16 rounded-full bg-white/40 flex items-center justify-center shadow-inner group-hover:bg-white/60 transition-colors overflow-hidden">
-                                        <Image src="/icons/barakahbot.png" alt="BarakahBot" width={48} height={48} className="w-full h-full object-cover" />
+                                    <div className="w-20 h-20 rounded-full bg-white/40 flex items-center justify-center shadow-inner group-hover:bg-white/60 transition-colors overflow-hidden">
+                                        <Image src="/icons/barakahbot.png" alt="BarakahBot" width={64} height={64} className="w-full h-full object-cover" />
                                     </div>
                                     <span className="text-sm font-semibold text-slate-700">Ask AI</span>
                                 </button>
@@ -438,8 +438,8 @@ export default function DashboardPage() {
                                     return (
                                         <div key={cat.value} className="liquid-glass liquid-gradient-indigo p-5 flex flex-col justify-between hover:-translate-y-1 transition-transform cursor-default" style={{ minHeight: '140px', borderRadius: '1.5rem' }}>
                                             <div className="flex items-center gap-3">
-                                                <div className="w-12 h-12 rounded-2xl bg-white/50 flex flex-shrink-0 items-center justify-center shadow-inner">
-                                                    <Ico src={cat.icon} size={28} alt={cat.label} />
+                                                <div className="w-16 h-16 rounded-2xl bg-white/50 flex flex-shrink-0 items-center justify-center shadow-inner">
+                                                    <Ico src={cat.icon} size={40} alt={cat.label} />
                                                 </div>
                                                 <span className="text-sm font-semibold text-slate-700 leading-tight line-clamp-2">{cat.label}</span>
                                             </div>
