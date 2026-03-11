@@ -5,6 +5,7 @@ import { getQueryClient } from '@/lib/query-client';
 import { useEffect } from 'react';
 import { initSyncEngine } from '@/services/sync-engine';
 import { Toaster } from '@/components/ui/sonner';
+import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 export function Providers({ children }: { children: React.ReactNode }) {
     const queryClient = getQueryClient();
@@ -26,8 +27,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
     return (
         <QueryClientProvider client={queryClient}>
-            {children}
-            <Toaster position="top-center" richColors />
+           <NextThemesProvider 
+             attribute="class" 
+             defaultTheme="system" 
+             enableSystem 
+             disableTransitionOnChange
+           >
+              {children}
+              <Toaster position="top-center" richColors />
+           </NextThemesProvider>
         </QueryClientProvider>
     );
 }

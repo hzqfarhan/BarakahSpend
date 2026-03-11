@@ -1,11 +1,16 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Archivo } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 
 const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-geist-sans',
+  variable: '--font-sans',
+});
+
+const archivo = Archivo({
+  subsets: ['latin'],
+  variable: '--font-heading',
 });
 
 export const metadata: Metadata = {
@@ -34,7 +39,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
-  themeColor: '#eef1f6',
+  themeColor: '#09090b', // Updated default dark/light compat
 };
 
 export default function RootLayout({
@@ -43,16 +48,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.webmanifest" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
-      <body
-        className={`${inter.variable} antialiased`}
-        style={{ backgroundColor: '#eef1f6', color: '#1a1d2e', colorScheme: 'light' }}
-      >
+      <body className={`${inter.variable} ${archivo.variable} antialiased min-h-screen font-sans`}>
         <Providers>{children}</Providers>
       </body>
     </html>
