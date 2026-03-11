@@ -67,7 +67,7 @@ export default function LoginPage() {
         {/* Header */}
         <div className="text-center mb-10">
           <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-primary/10 border border-primary/20 overflow-hidden bg-white">
-            <Image src="/logo.png" alt="BarakahSpend Logo" width={64} height={64} className="object-cover" />
+            <Image src="/logo-barakah.png" alt="BarakahSpend Logo" width={64} height={64} className="object-cover" />
           </div>
           <h1 className="text-3xl font-heading font-extrabold tracking-tight mb-2 text-foreground">
             Welcome back

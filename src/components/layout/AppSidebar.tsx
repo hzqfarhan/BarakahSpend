@@ -31,7 +31,7 @@ export function AppSidebar() {
       <div className="flex flex-col gap-8 p-6 pt-10">
         <Link href="/dashboard" className="flex items-center gap-3 group">
           <div className="p-1 flex items-center justify-center rounded-xl group-hover:opacity-80 transition-all duration-300">
-             <Image src="/logo.png" alt="BarakahSpend Logo" width={28} height={28} className="rounded-md" />
+             <Image src="/logo-barakah.png" alt="BarakahSpend Logo" width={28} height={28} className="rounded-md" />
           </div>
           <span className="text-xl font-heading font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 dark:from-white dark:to-white/70">
             BarakahSpend

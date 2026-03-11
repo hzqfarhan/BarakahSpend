@@ -53,7 +53,7 @@ export function Sidebar({
         >
             {/* Logo / Brand */}
             <div className="p-4 flex items-center gap-3">
-                <Image src="/logo.png" alt="BarakahSpend" width={36} height={36} className="rounded-xl shrink-0" />
+                <Image src="/logo-barakah.png" alt="BarakahSpend" width={36} height={36} className="rounded-xl shrink-0" />
                 {!collapsed && (
                     <span className="text-lg font-bold gradient-text whitespace-nowrap">BarakahSpend</span>
                 )}

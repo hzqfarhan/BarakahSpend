@@ -35,7 +35,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center rounded-xl overflow-hidden shadow-sm bg-white/10">
-              <Image src="/logo.png" alt="BarakahSpend Logo" width={36} height={36} className="rounded-lg object-cover" />
+              <Image src="/logo-barakah.png" alt="BarakahSpend Logo" width={36} height={36} className="rounded-lg object-cover" />
             </div>
             <span className="font-heading font-bold text-xl tracking-tight">BarakahSpend</span>
           </div>
