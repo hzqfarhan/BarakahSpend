@@ -41,10 +41,10 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-4">
             <ThemeToggle />
-            <Link href="/auth/login" className="hidden sm:block text-sm font-medium hover:text-primary transition-colors">
+            <Link href="/login" className="hidden sm:block text-sm font-medium hover:text-primary transition-colors">
               Sign In
             </Link>
-            <Link href="/auth/register">
+            <Link href="/signup">
               <Button className="rounded-full px-6 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 transition-all">
                 Get Started
               </Button>
@@ -79,12 +79,12 @@ export default function LandingPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center gap-4 animate-fade-up stagger-3">
-              <Link href="/auth/register">
+              <Link href="/signup">
                 <Button size="lg" className="rounded-full px-8 h-14 text-base font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/20 hover:-translate-y-1 transition-all w-full sm:w-auto">
                   Start your journey <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
-              <Link href="/auth/login">
+              <Link href="/login">
                 <Button size="lg" variant="outline" className="rounded-full px-8 h-14 text-base font-medium border-border hover:bg-secondary w-full sm:w-auto">
                   Sign in
                 </Button>
